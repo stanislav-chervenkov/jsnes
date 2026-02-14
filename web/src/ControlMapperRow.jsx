@@ -156,13 +156,13 @@ class ControlMapperRow extends Component {
     const waitingText = "Press key or button...";
     return (
       <tr>
-        <td>{this.props.buttonName}</td>
-        <td onClick={() => this.handleClick(1)}>
+        <td className="py-3 pr-4">{this.props.buttonName}</td>
+        <td className="py-3 pr-4 cursor-pointer" onClick={() => this.handleClick(1)}>
           {this.state.waitingForKey === 1
             ? waitingText
             : this.state.playerOneButton}
         </td>
-        <td onClick={() => this.handleClick(2)}>
+        <td className="py-3 cursor-pointer" onClick={() => this.handleClick(2)}>
           {this.state.waitingForKey === 2
             ? waitingText
             : this.state.playerTwoButton}

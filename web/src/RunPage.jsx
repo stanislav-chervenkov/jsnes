@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Button, Progress } from "reactstrap";
 import { Link, useLocation, useParams } from "react-router-dom";
 
 import config from "./config";
@@ -7,8 +6,6 @@ import ControlsModal from "./ControlsModal";
 import Emulator from "./Emulator";
 import RomLibrary from "./RomLibrary";
 import { loadBinary } from "./utils";
-
-import "./RunPage.css";
 
 function withParams(Component) {
   return (props) => (
@@ -36,50 +33,44 @@ class RunPage extends Component {
 
   render() {
     return (
-      <div className="RunPage">
+      <div className="overflow-hidden">
         <nav
-          className="navbar navbar-expand"
+          className="flex items-center px-4 py-2"
           ref={(el) => {
             this.navbar = el;
           }}
         >
-          <ul className="navbar-nav" style={{ width: "200px" }}>
-            <li className="navitem">
-              <Link to="/" className="nav-link">
-                &lsaquo; Back
-              </Link>
-            </li>
-          </ul>
-          <ul className="navbar-nav ms-auto me-auto">
-            <li className="navitem">
-              <span className="navbar-text me-3">{this.state.romName}</span>
-            </li>
-          </ul>
-          <ul className="navbar-nav" style={{ width: "200px" }}>
-            <li className="navitem">
-              <Button
-                outline
-                color="primary"
-                onClick={this.toggleControlsModal}
-                className="me-3"
-                disabled={!!this.state.error}
-              >
-                Controls
-              </Button>
-              <Button
-                outline
-                color="primary"
-                onClick={this.handlePauseResume}
-                disabled={!this.state.running}
-              >
-                {this.state.paused ? "Resume" : "Pause"}
-              </Button>
-            </li>
-          </ul>
+          <div style={{ width: "200px" }}>
+            <Link to="/" className="block py-2 px-2 no-underline">
+              &lsaquo; Back
+            </Link>
+          </div>
+          <div className="mx-auto">
+            <span className="mr-3">{this.state.romName}</span>
+          </div>
+          <div
+            className="flex"
+            style={{ width: "200px", justifyContent: "flex-end" }}
+          >
+            <button
+              onClick={this.toggleControlsModal}
+              className="border border-white text-white px-3 py-1 bg-transparent hover:bg-white hover:text-black mr-3 cursor-pointer disabled:opacity-50 disabled:cursor-default disabled:hover:bg-transparent disabled:hover:text-white"
+              disabled={!!this.state.error}
+            >
+              Controls
+            </button>
+            <button
+              onClick={this.handlePauseResume}
+              className="border border-white text-white px-3 py-1 bg-transparent hover:bg-white hover:text-black cursor-pointer disabled:opacity-50 disabled:cursor-default disabled:hover:bg-transparent disabled:hover:text-white"
+              disabled={!this.state.running}
+            >
+              {this.state.paused ? "Resume" : "Pause"}
+            </button>
+          </div>
         </nav>
 
         <div
-          className="screen-container"
+          className="relative flex justify-center items-center"
           ref={(el) => {
             this.screenContainer = el;
           }}
@@ -98,15 +89,21 @@ class RunPage extends Component {
               {this.state.error}
             </div>
           ) : this.state.loading ? (
-            <Progress
-              value={this.state.loadedPercent}
+            <div
+              className="bg-gray-700 rounded"
               style={{
                 position: "absolute",
                 width: "70%",
                 left: "15%",
                 top: "48%",
+                height: "8px",
               }}
-            />
+            >
+              <div
+                className="bg-white rounded h-full transition-all"
+                style={{ width: this.state.loadedPercent + "%" }}
+              />
+            </div>
           ) : this.state.romData ? (
             <Emulator
               romData={this.state.romData}
@@ -118,7 +115,7 @@ class RunPage extends Component {
             />
           ) : null}
 
-          {/* TODO: lift keyboard and gamepad state up */}
+          {/* TODO: lift keyboard and gamepad state up */}
           {this.state.controlsModalOpen && (
             <ControlsModal
               isOpen={this.state.controlsModalOpen}

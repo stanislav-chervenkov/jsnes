@@ -1,24 +1,11 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   optimizeDeps: {
     exclude: ["jsnes"],
-  },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        silenceDeprecations: [
-          "import",
-          "global-builtin",
-          "color-functions",
-          "if-function",
-          "abs-percent",
-          "function-units",
-        ],
-      },
-    },
   },
   server: {
     port: 3000,

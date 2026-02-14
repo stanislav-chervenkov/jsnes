@@ -5,7 +5,6 @@ import ListPage from "./ListPage";
 import RunPage from "./RunPage";
 import config from "./config";
 import { handleError } from "./utils";
-import "./App.css";
 
 class App extends Component {
   constructor(props) {
@@ -19,18 +18,14 @@ class App extends Component {
   render() {
     if (this.state.error) {
       return (
-        <div className="container my-4">
-          <div className="row justify-content-center">
-            <div className="col-md-8">
-              Oops - there has been an error. It has been logged to the console.
-            </div>
-          </div>
+        <div className="max-w-3xl mx-auto my-4 font-mono">
+          Oops - there has been an error. It has been logged to the console.
         </div>
       );
     }
     return (
       <BrowserRouter>
-        <div className="App">
+        <div className="h-full font-mono">
           <Routes>
             <Route exact path="/" element={<ListPage />} />
             <Route path="/run/:slug" element={<RunPage />} />
