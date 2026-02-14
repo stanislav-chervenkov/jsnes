@@ -207,6 +207,7 @@ class NES {
 
     this.reset();
     this.mmap = this.rom.createMapper();
+    this.mmap.reset();
     this.mmap.loadROM();
     this.ppu.setMirroring(this.rom.getMirroringType());
     this.romData = data;
