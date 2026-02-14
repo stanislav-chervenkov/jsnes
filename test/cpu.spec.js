@@ -1,4 +1,5 @@
-import { assert } from "chai";
+import assert from "node:assert/strict";
+import { describe, it, beforeEach } from "node:test";
 import CPU from "../src/cpu.js";
 
 // Based on https://github.com/gutomaia/wedNESday/blob/0.0.x/wednesday/cpu_6502_spec.py
@@ -61,7 +62,7 @@ describe("CPU", function () {
     let mem = null;
     let perform_check_cycles = true;
 
-    beforeEach(function (done) {
+    beforeEach(function() {
         mem = Array.apply(
             null, Array(0x10000)
         ).map(Number.prototype.valueOf, 0);
@@ -72,7 +73,6 @@ describe("CPU", function () {
         cpu.mem = mem;
         perform_check_cycles = true;
         cpu.REG_SP = 0xfd;
-        done();
     });
 
     function check_cycles() {
@@ -231,18 +231,17 @@ describe("CPU", function () {
         cpu.irqRequested = false;
     }
 
-    it("lda imediate", function(done) {
+    it("lda imediate", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa9);
         memory_set(0x101, 0xff);
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("lda zeropage", function(done) {
+    it("lda zeropage", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa5);
         memory_set(0x101, 0x84);
@@ -250,11 +249,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("lda zero page x", function(done) {
+    it("lda zero page x", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xb5);
@@ -263,11 +261,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("lda absolute", function(done) {
+    it("lda absolute", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xad);
         memory_set(0x101, 0x84);
@@ -276,11 +273,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("lda absolute x", function(done) {
+    it("lda absolute x", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xbd);
@@ -289,13 +285,12 @@ describe("CPU", function () {
         memory_set(0x85, 0xff);
         let cycles = execute();
         if (check_cycles()) {
-            assert.equal(cycles, 0x4);
+            assert.strictEqual(cycles, 0x4);
         };
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("lda absolute x 2", function(done) {
+    it("lda absolute x 2", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xbd);
@@ -304,12 +299,11 @@ describe("CPU", function () {
         memory_set(0x300, 0xff);
         let cycles = execute();
         if (check_cycles()) {
-            assert.equal(cycles, 0x5);
+            assert.strictEqual(cycles, 0x5);
         };
-        done();
     });
     
-    it("lda absolute y", function(done) {
+    it("lda absolute y", function() {
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xb9);
@@ -318,9 +312,9 @@ describe("CPU", function () {
         memory_set(0x85, 0xff);
         let cycles = execute();
         if (check_cycles()) {
-            assert.equal(cycles, 0x4);
+            assert.strictEqual(cycles, 0x4);
         };
-        assert.equal(cpu_register("A"), 0xff);
+        assert.strictEqual(cpu_register("A"), 0xff);
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xb9);
@@ -329,12 +323,11 @@ describe("CPU", function () {
         memory_set(0x300, 0xff);
         cycles = execute();
         if (check_cycles()) {
-            assert.equal(cycles, 0x5);
+            assert.strictEqual(cycles, 0x5);
         };
-        done();
     });
     
-    it("lda indirect x", function(done) {
+    it("lda indirect x", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xa1);
@@ -345,11 +338,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("lda indirect y", function(done) {
+    it("lda indirect y", function() {
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xb1);
@@ -359,9 +351,9 @@ describe("CPU", function () {
         memory_set(0x87, 0xff);
         let cycles = execute();
         if (check_cycles()) {
-            assert.equal(cycles, 0x5);
+            assert.strictEqual(cycles, 0x5);
         };
-        assert.equal(cpu_register("A"), 0xff);
+        assert.strictEqual(cpu_register("A"), 0xff);
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xb1);
@@ -371,67 +363,61 @@ describe("CPU", function () {
         memory_set(0x300, 0xff);
         cycles = execute();
         if (check_cycles()) {
-            assert.equal(cycles, 0x6);
+            assert.strictEqual(cycles, 0x6);
         };
-        done();
     });
     
-    it("lda z flag set", function(done) {
+    it("lda z flag set", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa9);
         memory_set(0x101, 0x0);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("lda z flag unset", function(done) {
+    it("lda z flag unset", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa9);
         memory_set(0x101, 0x1);
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("lda n flag set", function(done) {
+    it("lda n flag set", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa9);
         memory_set(0x101, 0x81);
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("lda n flag unset", function(done) {
+    it("lda n flag unset", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa9);
         memory_set(0x101, 0x1);
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("ldx immediate", function(done) {
+    it("ldx immediate", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa2);
         memory_set(0x101, 0xff);
 
         execute();
 
-        assert.equal(cpu_register("X"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("X"), 0xff);
     });
     
-    it("ldx zero page", function(done) {
+    it("ldx zero page", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa6);
         memory_set(0x101, 0x84);
@@ -439,11 +425,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("X"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("X"), 0xff);
     });
     
-    it("ldx zeropage y", function(done) {
+    it("ldx zeropage y", function() {
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xb6);
@@ -452,11 +437,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("X"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("X"), 0xff);
     });
     
-    it("ldx absolute", function(done) {
+    it("ldx absolute", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xae);
         memory_set(0x101, 0x84);
@@ -465,11 +449,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("X"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("X"), 0xff);
     });
     
-    it("ldx absolute y", function(done) {
+    it("ldx absolute y", function() {
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xbe);
@@ -479,66 +462,60 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("X"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("X"), 0xff);
     });
     
-    it("ldx z flag set", function(done) {
+    it("ldx z flag set", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa2);
         memory_set(0x101, 0x0);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("ldx z flag unset", function(done) {
+    it("ldx z flag unset", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa2);
         memory_set(0x101, 0x1);
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("ldx n flag set", function(done) {
+    it("ldx n flag set", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa2);
         memory_set(0x101, 0x81);
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("ldx n flag unset", function(done) {
+    it("ldx n flag unset", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa2);
         memory_set(0x101, 0x1);
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("ldy immediate", function(done) {
+    it("ldy immediate", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa0);
         memory_set(0x101, 0xff);
 
         execute();
 
-        assert.equal(cpu_register("Y"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("Y"), 0xff);
     });
     
-    it("ldy zeropage", function(done) {
+    it("ldy zeropage", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa4);
         memory_set(0x101, 0x84);
@@ -546,11 +523,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("Y"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("Y"), 0xff);
     });
     
-    it("ldy zeropage x", function(done) {
+    it("ldy zeropage x", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xb4);
@@ -559,11 +535,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("Y"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("Y"), 0xff);
     });
     
-    it("ldy absolute", function(done) {
+    it("ldy absolute", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xac);
         memory_set(0x101, 0x84);
@@ -572,11 +547,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("Y"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("Y"), 0xff);
     });
     
-    it("ldy absolute x", function(done) {
+    it("ldy absolute x", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xbc);
@@ -586,55 +560,50 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("Y"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("Y"), 0xff);
     });
     
-    it("ldy z flag set", function(done) {
+    it("ldy z flag set", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa0);
         memory_set(0x101, 0x0);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("ldy z flag unset", function(done) {
+    it("ldy z flag unset", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa0);
         memory_set(0x101, 0x1);
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("ldy n flag set", function(done) {
+    it("ldy n flag set", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa0);
         memory_set(0x101, 0x81);
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("ldy n flag unset", function(done) {
+    it("ldy n flag unset", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xa0);
         memory_set(0x101, 0x1);
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("sta zeropage", function(done) {
+    it("sta zeropage", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x85);
@@ -642,11 +611,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0xff);
     });
     
-    it("sta zeropage x", function(done) {
+    it("sta zeropage x", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -655,11 +623,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0xff);
     });
     
-    it("sta absolute", function(done) {
+    it("sta absolute", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x8d);
@@ -668,11 +635,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0xff);
     });
     
-    it("sta absolute x", function(done) {
+    it("sta absolute x", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -682,11 +648,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0xff);
     });
     
-    it("sta absolute y", function(done) {
+    it("sta absolute y", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
@@ -696,11 +661,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0xff);
     });
     
-    it("sta indirect x", function(done) {
+    it("sta indirect x", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -711,11 +675,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x87), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x87), 0xff);
     });
     
-    it("sta indirect y", function(done) {
+    it("sta indirect y", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
@@ -726,11 +689,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x87), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x87), 0xff);
     });
     
-    it("stx zeropage", function(done) {
+    it("stx zeropage", function() {
         cpu_set_register("X", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x86);
@@ -738,11 +700,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0xff);
     });
     
-    it("stx zeropage y", function(done) {
+    it("stx zeropage y", function() {
         cpu_set_register("X", 0xff);
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
@@ -751,11 +712,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0xff);
     });
     
-    it("stx absolute", function(done) {
+    it("stx absolute", function() {
         cpu_set_register("X", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x8e);
@@ -764,11 +724,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0xff);
     });
     
-    it("sty zeropage", function(done) {
+    it("sty zeropage", function() {
         cpu_set_register("Y", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x84);
@@ -776,11 +735,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0xff);
     });
     
-    it("sty zeropage y", function(done) {
+    it("sty zeropage y", function() {
         cpu_set_register("Y", 0xff);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -789,11 +747,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0xff);
     });
     
-    it("sty absolute", function(done) {
+    it("sty absolute", function() {
         cpu_set_register("Y", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x8c);
@@ -802,209 +759,190 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0xff);
     });
     
-    it("tax", function(done) {
+    it("tax", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0xaa);
 
         execute();
 
-        assert.equal(cpu_register("X"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("X"), 0xff);
     });
     
-    it("tax z flag set", function(done) {
+    it("tax z flag set", function() {
         cpu_set_register("A", 0x0);
         cpu_pc(0x100);
         memory_set(0x100, 0xaa);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("tax z flag unset", function(done) {
+    it("tax z flag unset", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xaa);
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("tax n flag set", function(done) {
+    it("tax n flag set", function() {
         cpu_set_register("A", 0x81);
         cpu_pc(0x100);
         memory_set(0x100, 0xaa);
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("tax n flag unset", function(done) {
+    it("tax n flag unset", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xaa);
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("tay", function(done) {
+    it("tay", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0xa8);
 
         execute();
 
-        assert.equal(cpu_register("Y"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("Y"), 0xff);
     });
     
-    it("txa", function(done) {
+    it("txa", function() {
         cpu_set_register("X", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x8a);
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("tya", function(done) {
+    it("tya", function() {
         cpu_set_register("Y", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x98);
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("tsx", function(done) {
+    it("tsx", function() {
         cpu_set_register("SP", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0xba);
 
         execute();
 
-        assert.equal(cpu_register("X"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("X"), 0xff);
     });
     
-    it("txs", function(done) {
+    it("txs", function() {
         cpu_set_register("X", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x9a);
 
         execute();
 
-        assert.equal(cpu_register("SP"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("SP"), 0xff);
     });
     
-    it("pha", function(done) {
+    it("pha", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x48);
 
         execute();
 
-        assert.equal(cpu_pull_byte(), 0xff);
-        done();
+        assert.strictEqual(cpu_pull_byte(), 0xff);
     });
     
-    it("php", function(done) {
+    it("php", function() {
         cpu_set_register("P", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x8);
 
         execute();
 
-        assert.equal(cpu_pull_byte(), 0xff);
-        done();
+        assert.strictEqual(cpu_pull_byte(), 0xff);
     });
     
-    it("pla", function(done) {
+    it("pla", function() {
         cpu_pc(0x100);
         cpu_push_byte(0xff);
         memory_set(0x100, 0x68);
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("pla z flag set", function(done) {
+    it("pla z flag set", function() {
         cpu_push_byte(0x0);
         cpu_pc(0x100);
         memory_set(0x100, 0x68);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("pla z flag unset", function(done) {
+    it("pla z flag unset", function() {
         cpu_push_byte(0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x68);
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("pla n flag set", function(done) {
+    it("pla n flag set", function() {
         cpu_push_byte(0x81);
         cpu_pc(0x100);
         memory_set(0x100, 0x68);
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("pla n flag unset", function(done) {
+    it("pla n flag unset", function() {
         cpu_push_byte(0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x68);
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("plp", function(done) {
+    it("plp", function() {
         cpu_push_byte(0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x28);
 
         execute();
 
-        assert.equal(cpu_register("P"), 0xcf);
-        done();
+        assert.strictEqual(cpu_register("P"), 0xcf);
     });
     
-    it("and immediate", function(done) {
+    it("and immediate", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x29);
@@ -1012,11 +950,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf);
     });
     
-    it("and zeropage", function(done) {
+    it("and zeropage", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x25);
@@ -1025,11 +962,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf);
     });
     
-    it("and zeropage x", function(done) {
+    it("and zeropage x", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -1039,11 +975,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf);
     });
     
-    it("and absolute", function(done) {
+    it("and absolute", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x2d);
@@ -1053,11 +988,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf);
     });
     
-    it("and absolute x", function(done) {
+    it("and absolute x", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -1068,11 +1002,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf);
     });
     
-    it("and absolute y", function(done) {
+    it("and absolute y", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
@@ -1083,11 +1016,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf);
     });
     
-    it("and indirect x", function(done) {
+    it("and indirect x", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -1099,11 +1031,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf);
     });
     
-    it("and indirect y", function(done) {
+    it("and indirect y", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
@@ -1115,22 +1046,20 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf);
     });
     
-    it("and z flag set", function(done) {
+    it("and z flag set", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0x29);
         memory_set(0x101, 0x0);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("and z flag unset", function(done) {
+    it("and z flag unset", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x29);
@@ -1138,11 +1067,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("and n flag set", function(done) {
+    it("and n flag set", function() {
         cpu_set_register("A", 0x81);
         cpu_pc(0x100);
         memory_set(0x100, 0x29);
@@ -1150,22 +1078,20 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("and n flag unset", function(done) {
+    it("and n flag unset", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0x29);
         memory_set(0x101, 0x1);
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("eor immediate", function(done) {
+    it("eor immediate", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x49);
@@ -1173,11 +1099,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf0);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf0);
     });
     
-    it("eor zeropage", function(done) {
+    it("eor zeropage", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x45);
@@ -1186,11 +1111,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf0);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf0);
     });
     
-    it("eor zeropage x", function(done) {
+    it("eor zeropage x", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -1200,11 +1124,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf0);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf0);
     });
     
-    it("eor absolute", function(done) {
+    it("eor absolute", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x4d);
@@ -1214,11 +1137,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf0);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf0);
     });
     
-    it("eor absolute x", function(done) {
+    it("eor absolute x", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -1229,11 +1151,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf0);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf0);
     });
     
-    it("eor absolute y", function(done) {
+    it("eor absolute y", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
@@ -1244,11 +1165,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf0);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf0);
     });
     
-    it("eor indirect x", function(done) {
+    it("eor indirect x", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -1260,11 +1180,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf0);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf0);
     });
     
-    it("eor indirect y", function(done) {
+    it("eor indirect y", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
@@ -1276,22 +1195,20 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xf0);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xf0);
     });
     
-    it("eor z flag set", function(done) {
+    it("eor z flag set", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0x49);
         memory_set(0x101, 0x0);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("eor z flag unset", function(done) {
+    it("eor z flag unset", function() {
         cpu_set_register("A", 0x0);
         cpu_pc(0x100);
         memory_set(0x100, 0x49);
@@ -1299,11 +1216,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("eor n flag set", function(done) {
+    it("eor n flag set", function() {
         cpu_set_register("A", 0x0);
         cpu_pc(0x100);
         memory_set(0x100, 0x49);
@@ -1311,22 +1227,20 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("eor n flag unset", function(done) {
+    it("eor n flag unset", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0x49);
         memory_set(0x101, 0x1);
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("ora immediate", function(done) {
+    it("ora immediate", function() {
         cpu_set_register("A", 0xf0);
         cpu_pc(0x100);
         memory_set(0x100, 0x9);
@@ -1334,11 +1248,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("ora zeropage", function(done) {
+    it("ora zeropage", function() {
         cpu_set_register("A", 0xf0);
         cpu_pc(0x100);
         memory_set(0x100, 0x5);
@@ -1347,11 +1260,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("ora zeropage x", function(done) {
+    it("ora zeropage x", function() {
         cpu_set_register("A", 0xf0);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -1361,11 +1273,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("ora absolute", function(done) {
+    it("ora absolute", function() {
         cpu_set_register("A", 0xf0);
         cpu_pc(0x100);
         memory_set(0x100, 0xd);
@@ -1375,11 +1286,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("ora absolute x", function(done) {
+    it("ora absolute x", function() {
         cpu_set_register("A", 0xf0);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -1390,11 +1300,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("ora absolute y", function(done) {
+    it("ora absolute y", function() {
         cpu_set_register("A", 0xf0);
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
@@ -1405,11 +1314,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("ora indirect x", function(done) {
+    it("ora indirect x", function() {
         cpu_set_register("A", 0xf0);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -1421,11 +1329,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("ora indirect y", function(done) {
+    it("ora indirect y", function() {
         cpu_set_register("A", 0xf0);
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
@@ -1437,22 +1344,20 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("ora z flag set", function(done) {
+    it("ora z flag set", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0x9);
         memory_set(0x101, 0x0);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("ora z flag unset", function(done) {
+    it("ora z flag unset", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x9);
@@ -1460,11 +1365,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("ora n flag set", function(done) {
+    it("ora n flag set", function() {
         cpu_set_register("A", 0x81);
         cpu_pc(0x100);
         memory_set(0x100, 0x9);
@@ -1472,22 +1376,20 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("ora n flag unset", function(done) {
+    it("ora n flag unset", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0x9);
         memory_set(0x101, 0x1);
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("bit zeropage", function(done) {
+    it("bit zeropage", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x24);
@@ -1496,11 +1398,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("bit absolute", function(done) {
+    it("bit absolute", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x2c);
@@ -1510,11 +1411,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("bit n flag set", function(done) {
+    it("bit n flag set", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x24);
@@ -1523,11 +1423,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("bit n flag unset", function(done) {
+    it("bit n flag unset", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x24);
@@ -1536,11 +1435,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("bit v flag set", function(done) {
+    it("bit v flag set", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x24);
@@ -1549,11 +1447,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("V"));
-        done();
+        assert.strictEqual(cpu_flag("V"), true);
     });
     
-    it("bit v flag unset", function(done) {
+    it("bit v flag unset", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x24);
@@ -1562,11 +1459,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("V"));
-        done();
+        assert.strictEqual(cpu_flag("V"), false);
     });
     
-    it("bit z flag set", function(done) {
+    it("bit z flag set", function() {
         cpu_set_register("A", 0x0);
         cpu_pc(0x100);
         memory_set(0x100, 0x24);
@@ -1575,11 +1471,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("bit z flag unset", function(done) {
+    it("bit z flag unset", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x24);
@@ -1588,11 +1483,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("adc immediate", function(done) {
+    it("adc immediate", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x69);
@@ -1600,12 +1494,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x3);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x3);
     });
     
-    it("adc immediate with bcd", function(done) {
-        this.skip("Not implemented on jsNES");
+    it.skip("adc immediate with bcd", function() {
         cpu_set_flag("D");
         cpu_set_register("A", 0x29);
         cpu_pc(0x100);
@@ -1614,7 +1506,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x40);
+        assert.strictEqual(cpu_register("A"), 0x40);
         cpu_set_flag("D");
         cpu_set_register("A", 0x29 | Status.N);
         cpu_pc(0x100);
@@ -1623,7 +1515,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x38);
+        assert.strictEqual(cpu_register("A"), 0x38);
         cpu_set_flag("D");
         cpu_set_flag("C");
         cpu_set_register("A", 0x58);
@@ -1633,11 +1525,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x5);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x5);
     });
     
-    it("adc zeropage", function(done) {
+    it("adc zeropage", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x65);
@@ -1646,11 +1537,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x3);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x3);
     });
     
-    it("adc zeropage x", function(done) {
+    it("adc zeropage x", function() {
         cpu_set_register("A", 0x1);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -1660,11 +1550,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x3);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x3);
     });
     
-    it("adc absolute", function(done) {
+    it("adc absolute", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x6d);
@@ -1674,11 +1563,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x3);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x3);
     });
     
-    it("adc absolute x", function(done) {
+    it("adc absolute x", function() {
         cpu_set_register("A", 0x1);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -1689,11 +1577,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x3);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x3);
     });
     
-    it("adc absolute y", function(done) {
+    it("adc absolute y", function() {
         cpu_set_register("A", 0x1);
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
@@ -1704,11 +1591,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x3);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x3);
     });
     
-    it("adc indirect x", function(done) {
+    it("adc indirect x", function() {
         cpu_set_register("A", 0x1);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -1720,11 +1606,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x3);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x3);
     });
     
-    it("adc indirect y", function(done) {
+    it("adc indirect y", function() {
         cpu_set_register("A", 0x1);
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
@@ -1736,11 +1621,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x3);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x3);
     });
     
-    it("adc c flag set", function(done) {
+    it("adc c flag set", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x69);
@@ -1748,7 +1632,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("C"));
+        assert.strictEqual(cpu_flag("C"), true);
         cpu_set_flag("C");
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
@@ -1757,11 +1641,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), true);
     });
     
-    it("adc c flag unset", function(done) {
+    it("adc c flag unset", function() {
         cpu_set_register("A", 0x0);
         cpu_pc(0x100);
         memory_set(0x100, 0x69);
@@ -1769,7 +1652,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("C"));
+        assert.strictEqual(cpu_flag("C"), false);
         cpu_unset_flag("C");
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
@@ -1778,11 +1661,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), false);
     });
     
-    it("adc z flag set", function(done) {
+    it("adc z flag set", function() {
         cpu_set_register("A", 0x0);
         cpu_pc(0x100);
         memory_set(0x100, 0x69);
@@ -1790,7 +1672,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
+        assert.strictEqual(cpu_flag("Z"), true);
         cpu_set_flag("C");
         cpu_set_register("A", 0xfe);
         cpu_pc(0x100);
@@ -1799,11 +1681,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("adc z flag unset", function(done) {
+    it("adc z flag unset", function() {
         cpu_set_register("A", 0x0);
         cpu_pc(0x100);
         memory_set(0x100, 0x69);
@@ -1811,7 +1692,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
+        assert.strictEqual(cpu_flag("Z"), false);
         cpu_set_register("A", 0xfe);
         cpu_pc(0x100);
         memory_set(0x100, 0x69);
@@ -1819,11 +1700,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("adc v flag set", function(done) {
+    it("adc v flag set", function() {
         cpu_set_register("A", 0x7f);
         cpu_pc(0x100);
         memory_set(0x100, 0x69);
@@ -1831,11 +1711,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("V"));
-        done();
+        assert.strictEqual(cpu_flag("V"), true);
     });
     
-    it("adc v flag unset", function(done) {
+    it("adc v flag unset", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x69);
@@ -1843,11 +1722,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("V"));
-        done();
+        assert.strictEqual(cpu_flag("V"), false);
     });
     
-    it("adc n flag set", function(done) {
+    it("adc n flag set", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x69);
@@ -1855,11 +1733,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("adc n flag unset", function(done) {
+    it("adc n flag unset", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x69);
@@ -1867,11 +1744,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("sbc immediate", function(done) {
+    it("sbc immediate", function() {
         cpu_set_flag("C");
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
@@ -1880,11 +1756,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x1);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x1);
     });
     
-    it("sbc immediate with bcd", function(done) {
+    it("sbc immediate with bcd", function() {
         cpu_set_flag("D");
         cpu_set_register("A", 0x29);
         cpu_pc(0x100);
@@ -1893,10 +1768,9 @@ describe("CPU", function () {
 
         execute();
 
-        done();
     });
     
-    it("sbc zeroPage", function(done) {
+    it("sbc zeroPage", function() {
         cpu_set_flag("C");
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
@@ -1906,11 +1780,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x1);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x1);
     });
     
-    it("sbc zeropage x", function(done) {
+    it("sbc zeropage x", function() {
         cpu_set_flag("C");
         cpu_set_register("A", 0x2);
         cpu_set_register("X", 0x1);
@@ -1921,11 +1794,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x1);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x1);
     });
     
-    it("sbc absolute", function(done) {
+    it("sbc absolute", function() {
         cpu_set_flag("C");
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
@@ -1936,11 +1808,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x1);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x1);
     });
     
-    it("sbc absolute x", function(done) {
+    it("sbc absolute x", function() {
         cpu_set_flag("C");
         cpu_set_register("A", 0x2);
         cpu_set_register("X", 0x1);
@@ -1952,11 +1823,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x1);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x1);
     });
     
-    it("sbc absolute y", function(done) {
+    it("sbc absolute y", function() {
         cpu_set_flag("C");
         cpu_set_register("A", 0x2);
         cpu_set_register("Y", 0x1);
@@ -1968,11 +1838,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x1);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x1);
     });
     
-    it("sbc indirect x", function(done) {
+    it("sbc indirect x", function() {
         cpu_set_flag("C");
         cpu_set_register("A", 0x2);
         cpu_set_register("X", 0x1);
@@ -1985,11 +1854,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x1);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x1);
     });
     
-    it("sbc indirect y", function(done) {
+    it("sbc indirect y", function() {
         cpu_set_flag("C");
         cpu_set_register("A", 0x2);
         cpu_set_register("Y", 0x1);
@@ -2002,11 +1870,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x1);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x1);
     });
     
-    it("sbc c flag set", function(done) {
+    it("sbc c flag set", function() {
         cpu_set_register("A", 0xc4);
         cpu_pc(0x100);
         memory_set(0x100, 0xe9);
@@ -2014,11 +1881,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), true);
     });
     
-    it("sbc c flag unset", function(done) {
+    it("sbc c flag unset", function() {
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0xe9);
@@ -2026,11 +1892,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), false);
     });
     
-    it("sbc z flag set", function(done) {
+    it("sbc z flag set", function() {
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0xe9);
@@ -2038,11 +1903,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("sbc z flag unset", function(done) {
+    it("sbc z flag unset", function() {
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0xe9);
@@ -2050,11 +1914,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("sbc v flag set", function(done) {
+    it("sbc v flag set", function() {
         cpu_set_register("A", 0x80);
         cpu_pc(0x100);
         memory_set(0x100, 0xe9);
@@ -2062,11 +1925,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("V"));
-        done();
+        assert.strictEqual(cpu_flag("V"), true);
     });
     
-    it("sbc v flag unset", function(done) {
+    it("sbc v flag unset", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xe9);
@@ -2074,11 +1936,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("V"));
-        done();
+        assert.strictEqual(cpu_flag("V"), false);
     });
     
-    it("sbc n flag set", function(done) {
+    it("sbc n flag set", function() {
         cpu_set_register("A", 0xfd);
         cpu_pc(0x100);
         memory_set(0x100, 0xe9);
@@ -2086,11 +1947,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("sbc n flag unset", function(done) {
+    it("sbc n flag unset", function() {
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0xe9);
@@ -2098,11 +1958,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("cmp immediate", function(done) {
+    it("cmp immediate", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0xc9);
@@ -2110,11 +1969,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cmp zeropage", function(done) {
+    it("cmp zeropage", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0xc5);
@@ -2123,11 +1981,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cmp zeropage x", function(done) {
+    it("cmp zeropage x", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -2137,11 +1994,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cmp absolute", function(done) {
+    it("cmp absolute", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0xcd);
@@ -2151,11 +2007,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cmp absolute x", function(done) {
+    it("cmp absolute x", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -2166,11 +2021,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cmp absolute y", function(done) {
+    it("cmp absolute y", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
@@ -2181,11 +2035,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cmp indirect x", function(done) {
+    it("cmp indirect x", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -2197,11 +2050,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cmp indirect y", function(done) {
+    it("cmp indirect y", function() {
         cpu_set_register("A", 0xff);
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
@@ -2213,11 +2065,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cmp n flag set", function(done) {
+    it("cmp n flag set", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xc9);
@@ -2225,11 +2076,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("cmp n flag unset", function(done) {
+    it("cmp n flag unset", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xc9);
@@ -2237,11 +2087,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("cmp z flag set", function(done) {
+    it("cmp z flag set", function() {
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0xc9);
@@ -2249,7 +2098,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
+        assert.strictEqual(cpu_flag("Z"), true);
         cpu_set_register("A", 0xfe);
         cpu_pc(0x100);
         memory_set(0x100, 0xc9);
@@ -2257,11 +2106,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cmp z flag unset", function(done) {
+    it("cmp z flag unset", function() {
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0xc9);
@@ -2269,7 +2117,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
+        assert.strictEqual(cpu_flag("Z"), false);
         cpu_set_register("A", 0xfe);
         cpu_pc(0x100);
         memory_set(0x100, 0xc9);
@@ -2277,11 +2125,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("cmp c flag set", function(done) {
+    it("cmp c flag set", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xc9);
@@ -2289,7 +2136,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("C"));
+        assert.strictEqual(cpu_flag("C"), true);
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0xc9);
@@ -2297,7 +2144,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("C"));
+        assert.strictEqual(cpu_flag("C"), true);
         cpu_set_register("A", 0xfe);
         cpu_pc(0x100);
         memory_set(0x100, 0xc9);
@@ -2305,11 +2152,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), true);
     });
     
-    it("cmp c flag unset", function(done) {
+    it("cmp c flag unset", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xc9);
@@ -2317,7 +2163,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("C"));
+        assert.strictEqual(cpu_flag("C"), false);
         cpu_set_register("A", 0xfd);
         cpu_pc(0x100);
         memory_set(0x100, 0xc9);
@@ -2325,11 +2171,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), false);
     });
     
-    it("cpx immediate", function(done) {
+    it("cpx immediate", function() {
         cpu_set_register("X", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0xe0);
@@ -2337,11 +2182,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cpx zeropage", function(done) {
+    it("cpx zeropage", function() {
         cpu_set_register("X", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0xe4);
@@ -2350,11 +2194,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cpx absolute", function(done) {
+    it("cpx absolute", function() {
         cpu_set_register("X", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0xec);
@@ -2364,11 +2207,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cpx n flag set", function(done) {
+    it("cpx n flag set", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xe0);
@@ -2376,11 +2218,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("cpx n flag unset", function(done) {
+    it("cpx n flag unset", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xe0);
@@ -2388,11 +2229,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("cpx z flag set", function(done) {
+    it("cpx z flag set", function() {
         cpu_set_register("X", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0xe0);
@@ -2400,11 +2240,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cpx z flag unset", function(done) {
+    it("cpx z flag unset", function() {
         cpu_set_register("X", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0xe0);
@@ -2412,11 +2251,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("cpx c flag set", function(done) {
+    it("cpx c flag set", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xe0);
@@ -2424,11 +2262,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), true);
     });
     
-    it("cpx C flag unset", function(done) {
+    it("cpx C flag unset", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xe0);
@@ -2436,11 +2273,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), false);
     });
     
-    it("cpy immediate", function(done) {
+    it("cpy immediate", function() {
         cpu_set_register("Y", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0xc0);
@@ -2448,11 +2284,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cpy zeroPage", function(done) {
+    it("cpy zeroPage", function() {
         cpu_set_register("Y", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0xc4);
@@ -2461,11 +2296,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cpy absolute", function(done) {
+    it("cpy absolute", function() {
         cpu_set_register("Y", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0xcc);
@@ -2475,11 +2309,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cpy n flag set", function(done) {
+    it("cpy n flag set", function() {
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xc0);
@@ -2487,11 +2320,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("cpy n flag unset", function(done) {
+    it("cpy n flag unset", function() {
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xc0);
@@ -2499,11 +2331,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("cpy z flag set", function(done) {
+    it("cpy z flag set", function() {
         cpu_set_register("Y", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0xc0);
@@ -2511,11 +2342,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("cpy z flag unset", function(done) {
+    it("cpy z flag unset", function() {
         cpu_set_register("Y", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0xc0);
@@ -2523,11 +2353,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("cpy c flag set", function(done) {
+    it("cpy c flag set", function() {
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xc0);
@@ -2535,11 +2364,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), true);
     });
     
-    it("cpy c flag unset", function(done) {
+    it("cpy c flag unset", function() {
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xc0);
@@ -2547,11 +2375,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), false);
     });
     
-    it("inc zeroPage", function(done) {
+    it("inc zeroPage", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xe6);
         memory_set(0x101, 0x84);
@@ -2559,11 +2386,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0xff);
     });
     
-    it("inc zeropage x", function(done) {
+    it("inc zeropage x", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xf6);
@@ -2572,11 +2398,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0xff);
     });
     
-    it("inc absolute", function(done) {
+    it("inc absolute", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xee);
         memory_set(0x101, 0x84);
@@ -2585,11 +2410,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0xff);
     });
     
-    it("inc absolute x", function(done) {
+    it("inc absolute x", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xfe);
@@ -2599,11 +2423,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0xff);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0xff);
     });
     
-    it("inc z flag set", function(done) {
+    it("inc z flag set", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xe6);
         memory_set(0x101, 0x84);
@@ -2611,11 +2434,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("inc z flag unset", function(done) {
+    it("inc z flag unset", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xe6);
         memory_set(0x101, 0x84);
@@ -2623,11 +2445,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("inc n flag set", function(done) {
+    it("inc n flag set", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xe6);
         memory_set(0x101, 0x84);
@@ -2635,11 +2456,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("inc n flag unset", function(done) {
+    it("inc n flag unset", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xe6);
         memory_set(0x101, 0x84);
@@ -2647,121 +2467,110 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("inx", function(done) {
+    it("inx", function() {
         cpu_set_register("X", 0xfe);
         cpu_pc(0x100);
         memory_set(0x100, 0xe8);
 
         execute();
 
-        assert.equal(cpu_register("X"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("X"), 0xff);
     });
     
-    it("inx z flag set", function(done) {
+    it("inx z flag set", function() {
         cpu_set_register("X", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0xe8);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("inx z flag unset", function(done) {
+    it("inx z flag unset", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xe8);
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("inx n flag set", function(done) {
+    it("inx n flag set", function() {
         cpu_set_register("X", 0xfe);
         cpu_pc(0x100);
         memory_set(0x100, 0xe8);
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("inx n flag unset", function(done) {
+    it("inx n flag unset", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xe8);
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("iny", function(done) {
+    it("iny", function() {
         cpu_set_register("Y", 0xfe);
         cpu_pc(0x100);
         memory_set(0x100, 0xc8);
 
         execute();
 
-        assert.equal(cpu_register("Y"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("Y"), 0xff);
     });
     
-    it("iny z flag set", function(done) {
+    it("iny z flag set", function() {
         cpu_set_register("Y", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0xc8);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("iny z flag unset", function(done) {
+    it("iny z flag unset", function() {
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xc8);
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("iny n flag set", function(done) {
+    it("iny n flag set", function() {
         cpu_set_register("Y", 0xfe);
         cpu_pc(0x100);
         memory_set(0x100, 0xc8);
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("iny n flag unset", function(done) {
+    it("iny n flag unset", function() {
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xc8);
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("dec zeroPage", function(done) {
+    it("dec zeroPage", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xc6);
         memory_set(0x101, 0x84);
@@ -2769,11 +2578,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0x1);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0x1);
     });
     
-    it("dec zeropage x", function(done) {
+    it("dec zeropage x", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xd6);
@@ -2782,11 +2590,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0x1);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0x1);
     });
     
-    it("dec absolute", function(done) {
+    it("dec absolute", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xce);
         memory_set(0x101, 0x84);
@@ -2795,11 +2602,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0x1);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0x1);
     });
     
-    it("dec absolute x", function(done) {
+    it("dec absolute x", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xde);
@@ -2809,11 +2615,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0x1);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0x1);
     });
     
-    it("dec z flag set", function(done) {
+    it("dec z flag set", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xc6);
         memory_set(0x101, 0x84);
@@ -2821,11 +2626,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("dec z flag unset", function(done) {
+    it("dec z flag unset", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xc6);
         memory_set(0x101, 0x84);
@@ -2833,11 +2637,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("dec n flag set", function(done) {
+    it("dec n flag set", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xc6);
         memory_set(0x101, 0x84);
@@ -2845,11 +2648,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("dec n flag unset", function(done) {
+    it("dec n flag unset", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xc6);
         memory_set(0x101, 0x84);
@@ -2857,132 +2659,120 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("dex", function(done) {
+    it("dex", function() {
         cpu_set_register("X", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0xca);
 
         execute();
 
-        assert.equal(cpu_register("X"), 0x1);
-        done();
+        assert.strictEqual(cpu_register("X"), 0x1);
     });
     
-    it("dex z flag set", function(done) {
+    it("dex z flag set", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xca);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("dex z flag unset", function(done) {
+    it("dex z flag unset", function() {
         cpu_set_register("X", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0xca);
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("dex n flag set", function(done) {
+    it("dex n flag set", function() {
         cpu_set_register("X", 0x0);
         cpu_pc(0x100);
         memory_set(0x100, 0xca);
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("dex n flag unset", function(done) {
+    it("dex n flag unset", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xca);
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("dey", function(done) {
+    it("dey", function() {
         cpu_set_register("Y", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0x88);
 
         execute();
 
-        assert.equal(cpu_register("Y"), 0x1);
-        done();
+        assert.strictEqual(cpu_register("Y"), 0x1);
     });
     
-    it("dey z flag set", function(done) {
+    it("dey z flag set", function() {
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x88);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("dey z flag unset", function(done) {
+    it("dey z flag unset", function() {
         cpu_set_register("Y", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0x88);
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("dey n flag set", function(done) {
+    it("dey n flag set", function() {
         cpu_set_register("Y", 0x0);
         cpu_pc(0x100);
         memory_set(0x100, 0x88);
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("dey n flag unset", function(done) {
+    it("dey n flag unset", function() {
         cpu_set_register("Y", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x88);
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("asl accumulator", function(done) {
+    it("asl accumulator", function() {
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0xa);
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x4);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x4);
     });
     
-    it("asl zeroPage", function(done) {
+    it("asl zeroPage", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0x6);
         memory_set(0x101, 0x84);
@@ -2990,11 +2780,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0x4);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0x4);
     });
     
-    it("asl zeropage x", function(done) {
+    it("asl zeropage x", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x16);
@@ -3003,11 +2792,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0x4);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0x4);
     });
     
-    it("asl absolute", function(done) {
+    it("asl absolute", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0xe);
         memory_set(0x101, 0x84);
@@ -3016,11 +2804,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0x4);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0x4);
     });
     
-    it("asl absoluteX", function(done) {
+    it("asl absoluteX", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x1e);
@@ -3030,88 +2817,80 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0x4);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0x4);
     });
     
-    it("asl c flag set", function(done) {
+    it("asl c flag set", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0xa);
 
         execute();
 
-        assert.isTrue(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), true);
     });
     
-    it("asl c flag unset", function(done) {
+    it("asl c flag unset", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xa);
 
         execute();
 
-        assert.isFalse(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), false);
     });
     
-    it("asl z flag set", function(done) {
+    it("asl z flag set", function() {
         cpu_set_register("A", 0x0);
         cpu_pc(0x100);
         memory_set(0x100, 0xa);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("asl z flag unset", function(done) {
+    it("asl z flag unset", function() {
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0xa);
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("asl n flag set", function(done) {
+    it("asl n flag set", function() {
         cpu_set_register("A", 0xfe);
         cpu_pc(0x100);
         memory_set(0x100, 0xa);
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("asl n flag unset", function(done) {
+    it("asl n flag unset", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0xa);
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("lsr accumulator", function(done) {
+    it("lsr accumulator", function() {
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0x4a);
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x1);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x1);
     });
     
-    it("lsr zeroPage", function(done) {
+    it("lsr zeroPage", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0x46);
         memory_set(0x101, 0x84);
@@ -3119,11 +2898,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0x1);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0x1);
     });
     
-    it("lsr zeropage x", function(done) {
+    it("lsr zeropage x", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x56);
@@ -3132,11 +2910,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0x1);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0x1);
     });
     
-    it("lsr absolute", function(done) {
+    it("lsr absolute", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0x4e);
         memory_set(0x101, 0x84);
@@ -3145,11 +2922,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0x1);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0x1);
     });
     
-    it("lsr absolute x", function(done) {
+    it("lsr absolute x", function() {
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x5e);
@@ -3159,66 +2935,60 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0x1);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0x1);
     });
     
-    it("lsr c flag set", function(done) {
+    it("lsr c flag set", function() {
         cpu_set_register("A", 0xff);
         cpu_pc(0x100);
         memory_set(0x100, 0x4a);
 
         execute();
 
-        assert.isTrue(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), true);
     });
     
-    it("lsr c flag unset", function(done) {
+    it("lsr c flag unset", function() {
         cpu_set_register("A", 0x10);
         cpu_pc(0x100);
         memory_set(0x100, 0x4a);
 
         execute();
 
-        assert.isFalse(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), false);
     });
     
-    it("lsr z flag set", function(done) {
+    it("lsr z flag set", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x4a);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("lsr z flag unset", function(done) {
+    it("lsr z flag unset", function() {
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0x4a);
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("lsr n flag unset", function(done) {
+    it("lsr n flag unset", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x4a);
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("rol accumulator", function(done) {
+    it("rol accumulator", function() {
         cpu_set_flag("C");
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
@@ -3226,11 +2996,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x5);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x5);
     });
     
-    it("rol zeropage", function(done) {
+    it("rol zeropage", function() {
         cpu_set_flag("C");
         cpu_pc(0x100);
         memory_set(0x100, 0x26);
@@ -3239,11 +3008,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0x5);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0x5);
     });
     
-    it("rol zeropage x", function(done) {
+    it("rol zeropage x", function() {
         cpu_set_flag("C");
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -3253,11 +3021,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0x5);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0x5);
     });
     
-    it("rol absolute", function(done) {
+    it("rol absolute", function() {
         cpu_set_flag("C");
         cpu_pc(0x100);
         memory_set(0x100, 0x2e);
@@ -3267,11 +3034,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0x5);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0x5);
     });
     
-    it("rol absolute x", function(done) {
+    it("rol absolute x", function() {
         cpu_set_flag("C");
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -3282,77 +3048,70 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0x5);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0x5);
     });
     
-    it("rol c flag set", function(done) {
+    it("rol c flag set", function() {
         cpu_set_register("A", 0x80);
         cpu_pc(0x100);
         memory_set(0x100, 0x2a);
 
         execute();
 
-        assert.isTrue(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), true);
     });
     
-    it("rol c flag unset", function(done) {
+    it("rol c flag unset", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x2a);
 
         execute();
 
-        assert.isFalse(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), false);
     });
     
-    it("rol z flag set", function(done) {
+    it("rol z flag set", function() {
         cpu_set_register("A", 0x0);
         cpu_pc(0x100);
         memory_set(0x100, 0x2a);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("rol z flag unset", function(done) {
+    it("rol z flag unset", function() {
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0x2a);
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("rol n flag set", function(done) {
+    it("rol n flag set", function() {
         cpu_set_register("A", 0xfe);
         cpu_pc(0x100);
         memory_set(0x100, 0x2a);
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("rol n flag unset", function(done) {
+    it("rol n flag unset", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x2a);
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("ror accumulator", function(done) {
+    it("ror accumulator", function() {
         cpu_set_flag("C");
         cpu_set_register("A", 0x8);
         cpu_pc(0x100);
@@ -3360,11 +3119,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0x84);
-        done();
+        assert.strictEqual(cpu_register("A"), 0x84);
     });
     
-    it("ror zeropage", function(done) {
+    it("ror zeropage", function() {
         cpu_set_flag("C");
         cpu_pc(0x100);
         memory_set(0x100, 0x66);
@@ -3373,11 +3131,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0x84);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0x84);
     });
     
-    it("ror zeropage x", function(done) {
+    it("ror zeropage x", function() {
         cpu_set_flag("C");
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -3387,11 +3144,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0x84);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0x84);
     });
     
-    it("ror absolute", function(done) {
+    it("ror absolute", function() {
         cpu_set_flag("C");
         cpu_pc(0x100);
         memory_set(0x100, 0x6e);
@@ -3401,11 +3157,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x84), 0x84);
-        done();
+        assert.strictEqual(memory_fetch(0x84), 0x84);
     });
     
-    it("ror absolute x", function(done) {
+    it("ror absolute x", function() {
         cpu_set_flag("C");
         cpu_set_register("X", 0x1);
         cpu_pc(0x100);
@@ -3416,55 +3171,50 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(memory_fetch(0x85), 0x84);
-        done();
+        assert.strictEqual(memory_fetch(0x85), 0x84);
     });
     
-    it("ror c flag set", function(done) {
+    it("ror c flag set", function() {
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
         memory_set(0x100, 0x6a);
 
         execute();
 
-        assert.isTrue(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), true);
     });
     
-    it("ror c flag unset", function(done) {
+    it("ror c flag unset", function() {
         cpu_set_register("A", 0x10);
         cpu_pc(0x100);
         memory_set(0x100, 0x6a);
 
         execute();
 
-        assert.isFalse(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), false);
     });
     
-    it("ror z flag set", function(done) {
+    it("ror z flag set", function() {
         cpu_set_register("A", 0x0);
         cpu_pc(0x100);
         memory_set(0x100, 0x6a);
 
         execute();
 
-        assert.isTrue(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), true);
     });
     
-    it("ror z flag unset", function(done) {
+    it("ror z flag unset", function() {
         cpu_set_register("A", 0x2);
         cpu_pc(0x100);
         memory_set(0x100, 0x6a);
 
         execute();
 
-        assert.isFalse(cpu_flag("Z"));
-        done();
+        assert.strictEqual(cpu_flag("Z"), false);
     });
     
-    it("ror n flag set", function(done) {
+    it("ror n flag set", function() {
         cpu_set_flag("C");
         cpu_set_register("A", 0xfe);
         cpu_pc(0x100);
@@ -3472,11 +3222,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isTrue(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), true);
     });
     
-    it("ror n flag unset", function(done) {
+    it("ror n flag unset", function() {
         cpu_unset_flag("C");
         cpu_set_register("A", 0x1);
         cpu_pc(0x100);
@@ -3484,11 +3233,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.isFalse(cpu_flag("N"));
-        done();
+        assert.strictEqual(cpu_flag("N"), false);
     });
     
-    it("jmp absolute", function(done) {
+    it("jmp absolute", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0x4c);
         memory_set(0x101, 0xff);
@@ -3496,11 +3244,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x1ff);
-        done();
+        assert.strictEqual(cpu_register("PC"), 0x1ff);
     });
     
-    it("jmp indirect", function(done) {
+    it("jmp indirect", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0x6c);
         memory_set(0x101, 0x84);
@@ -3510,11 +3257,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0xffff);
-        done();
+        assert.strictEqual(cpu_register("PC"), 0xffff);
     });
     
-    it("jsr", function(done) {
+    it("jsr", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0x20);
         memory_set(0x101, 0xff);
@@ -3522,13 +3268,12 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x1ff);
-        assert.equal(memory_fetch(0x1fd), 0x1);
-        assert.equal(memory_fetch(0x1fc), 0x2);
-        done();
+        assert.strictEqual(cpu_register("PC"), 0x1ff);
+        assert.strictEqual(memory_fetch(0x1fd), 0x1);
+        assert.strictEqual(memory_fetch(0x1fc), 0x2);
     });
     
-    it("jsr stack pointer", function(done) {
+    it("jsr stack pointer", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0x20);
         memory_set(0x101, 0x84);
@@ -3537,18 +3282,16 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x84);
-        assert.equal(cpu_register("SP"), 0xfb);
+        assert.strictEqual(cpu_register("PC"), 0x84);
+        assert.strictEqual(cpu_register("SP"), 0xfb);
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x103);
-        assert.equal(cpu_register("SP"), 0xfd);
-        done();
+        assert.strictEqual(cpu_register("PC"), 0x103);
+        assert.strictEqual(cpu_register("SP"), 0xfd);
     });
     
-    it("jsr with illegal opcode", function(done) {
-        this.skip();
+    it.skip("jsr with illegal opcode", function() {
         cpu_pc(0x100);
         memory_set(0x100, 0x20);
         memory_set(0x101, 0x84);
@@ -3569,53 +3312,50 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("A"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("A"), 0xff);
     });
     
-    it("rts", function(done) {
+    it("rts", function() {
         cpu_pc(0x100);
         cpu_push_word(0x102);
         memory_set(0x100, 0x60);
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x103);
-        done();
+        assert.strictEqual(cpu_register("PC"), 0x103);
     });
     
-    it("bcc", function(done) {
+    it("bcc", function() {
         skip_cycles();
         cpu_set_flag("C");
         cpu_pc(0x100);
         memory_set(0x100, 0x90);
         let cycles = execute();
         if (check_cycles()) {
-            assert.equal(cycles, 0x2);
+            assert.strictEqual(cycles, 0x2);
         };
-        assert.equal(cpu_register("PC"), 0x102);
+        assert.strictEqual(cpu_register("PC"), 0x102);
         cpu_unset_flag("C");
         cpu_pc(0x100);
         memory_set(0x100, 0x90);
         memory_set(0x101, 0x2);
         cycles = execute();
         if (check_cycles()) {
-            assert.equal(cycles, 0x3);
+            assert.strictEqual(cycles, 0x3);
         };
-        assert.equal(cpu_register("PC"), 0x104);
+        assert.strictEqual(cpu_register("PC"), 0x104);
         cpu_unset_flag("C");
         cpu_pc(0x100);
         memory_set(0x100, 0x90);
         memory_set(0x101, 0xfd);
         cycles = execute();
         if (check_cycles()) {
-            assert.equal(cycles, 0x4);
+            assert.strictEqual(cycles, 0x4);
         };
-        assert.equal(cpu_register("PC"), 0xff);
-        done();
+        assert.strictEqual(cpu_register("PC"), 0xff);
     });
     
-    it("bcs", function(done) {
+    it("bcs", function() {
         cpu_set_flag("C");
         cpu_pc(0x100);
         memory_set(0x100, 0xb0);
@@ -3623,7 +3363,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x104);
+        assert.strictEqual(cpu_register("PC"), 0x104);
         cpu_set_flag("C");
         cpu_pc(0x100);
         memory_set(0x100, 0xb0);
@@ -3631,11 +3371,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x100);
-        done();
+        assert.strictEqual(cpu_register("PC"), 0x100);
     });
     
-    it("beq", function(done) {
+    it("beq", function() {
         cpu_set_flag("Z");
         cpu_pc(0x100);
         memory_set(0x100, 0xf0);
@@ -3643,7 +3382,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x104);
+        assert.strictEqual(cpu_register("PC"), 0x104);
         cpu_set_flag("Z");
         cpu_pc(0x100);
         memory_set(0x100, 0xf0);
@@ -3651,19 +3390,18 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x100);
-        done();
+        assert.strictEqual(cpu_register("PC"), 0x100);
     });
     
-    it("bmi", function(done) {
+    it("bmi", function() {
         // Not taken: 2 cycles
         cpu_unset_flag("N");
         cpu_pc(0x150);
         memory_set(0x150, 0x30);
         memory_set(0x151, 0x02);
         let cycles = execute();
-        assert.equal(cycles, 2);
-        assert.equal(cpu_register("PC"), 0x152);
+        assert.strictEqual(cycles, 2);
+        assert.strictEqual(cpu_register("PC"), 0x152);
 
         // Taken, no page crossing: 3 cycles
         // (use address mid-page so opaddr stays on the same page as target)
@@ -3672,8 +3410,8 @@ describe("CPU", function () {
         memory_set(0x150, 0x30);
         memory_set(0x151, 0x02);
         cycles = execute();
-        assert.equal(cycles, 3);
-        assert.equal(cpu_register("PC"), 0x154);
+        assert.strictEqual(cycles, 3);
+        assert.strictEqual(cpu_register("PC"), 0x154);
 
         // Taken, page crossing: 4 cycles
         // (branch forward from 0x1F0 across the 0x200 page boundary)
@@ -3682,13 +3420,12 @@ describe("CPU", function () {
         memory_set(0x1f0, 0x30);
         memory_set(0x1f1, 0x20);
         cycles = execute();
-        assert.equal(cycles, 4);
-        assert.equal(cpu_register("PC"), 0x212);
+        assert.strictEqual(cycles, 4);
+        assert.strictEqual(cpu_register("PC"), 0x212);
 
-        done();
     });
     
-    it("bne", function(done) {
+    it("bne", function() {
         cpu_unset_flag("Z");
         cpu_pc(0x100);
         memory_set(0x100, 0xd0);
@@ -3696,7 +3433,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x104);
+        assert.strictEqual(cpu_register("PC"), 0x104);
         cpu_unset_flag("Z");
         cpu_pc(0x100);
         memory_set(0x100, 0xd0);
@@ -3704,11 +3441,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x100);
-        done();
+        assert.strictEqual(cpu_register("PC"), 0x100);
     });
     
-    it("bpl", function(done) {
+    it("bpl", function() {
         cpu_unset_flag("N");
         cpu_pc(0x100);
         memory_set(0x100, 0x10);
@@ -3716,7 +3452,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x104);
+        assert.strictEqual(cpu_register("PC"), 0x104);
         cpu_unset_flag("N");
         cpu_pc(0x100);
         memory_set(0x100, 0x10);
@@ -3724,11 +3460,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x100);
-        done();
+        assert.strictEqual(cpu_register("PC"), 0x100);
     });
     
-    it("bvc", function(done) {
+    it("bvc", function() {
         cpu_unset_flag("V");
         cpu_pc(0x100);
         memory_set(0x100, 0x50);
@@ -3736,7 +3471,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x104);
+        assert.strictEqual(cpu_register("PC"), 0x104);
         cpu_unset_flag("V");
         cpu_pc(0x100);
         memory_set(0x100, 0x50);
@@ -3744,11 +3479,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x100);
-        done();
+        assert.strictEqual(cpu_register("PC"), 0x100);
     });
     
-    it("bvs", function(done) {
+    it("bvs", function() {
         cpu_set_flag("V");
         cpu_pc(0x100);
         memory_set(0x100, 0x70);
@@ -3756,7 +3490,7 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x104);
+        assert.strictEqual(cpu_register("PC"), 0x104);
         cpu_set_flag("V");
         cpu_pc(0x100);
         memory_set(0x100, 0x70);
@@ -3764,137 +3498,129 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x100);
-        done();
+        assert.strictEqual(cpu_register("PC"), 0x100);
     });
     
-    it("clc", function(done) {
+    it("clc", function() {
         cpu_unset_flag("C");
         cpu_pc(0x100);
         memory_set(0x100, 0x18);
 
         execute();
 
-        assert.isFalse(cpu_flag("C"));
+        assert.strictEqual(cpu_flag("C"), false);
         cpu_set_flag("C");
         cpu_pc(0x100);
         memory_set(0x100, 0x18);
 
         execute();
 
-        assert.isFalse(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), false);
     });
     
-    it("cld", function(done) {
+    it("cld", function() {
         cpu_unset_flag("D");
         cpu_pc(0x100);
         memory_set(0x100, 0xd8);
 
         execute();
 
-        assert.isFalse(cpu_flag("D"));
+        assert.strictEqual(cpu_flag("D"), false);
         cpu_set_flag("D");
         cpu_pc(0x100);
         memory_set(0x100, 0xd8);
 
         execute();
 
-        assert.isFalse(cpu_flag("D"));
-        done();
+        assert.strictEqual(cpu_flag("D"), false);
     });
     
-    it("cli", function(done) {
+    it("cli", function() {
         cpu_unset_flag("I");
         cpu_pc(0x100);
         memory_set(0x100, 0x58);
 
         execute();
 
-        assert.isFalse(cpu_flag("I"));
+        assert.strictEqual(cpu_flag("I"), false);
         cpu_set_flag("I");
         cpu_pc(0x100);
         memory_set(0x100, 0x58);
 
         execute();
 
-        assert.isFalse(cpu_flag("I"));
-        done();
+        assert.strictEqual(cpu_flag("I"), false);
     });
     
-    it("clv", function(done) {
+    it("clv", function() {
         cpu_unset_flag("V");
         cpu_pc(0x100);
         memory_set(0x100, 0xb8);
 
         execute();
 
-        assert.isFalse(cpu_flag("V"));
+        assert.strictEqual(cpu_flag("V"), false);
         cpu_set_flag("V");
         cpu_pc(0x100);
         memory_set(0x100, 0xb8);
 
         execute();
 
-        assert.isFalse(cpu_flag("V"));
-        done();
+        assert.strictEqual(cpu_flag("V"), false);
     });
     
-    it("sec", function(done) {
+    it("sec", function() {
         cpu_unset_flag("C");
         cpu_pc(0x100);
         memory_set(0x100, 0x38);
 
         execute();
 
-        assert.isTrue(cpu_flag("C"));
+        assert.strictEqual(cpu_flag("C"), true);
         cpu_set_flag("C");
         cpu_pc(0x100);
         memory_set(0x100, 0x38);
 
         execute();
 
-        assert.isTrue(cpu_flag("C"));
-        done();
+        assert.strictEqual(cpu_flag("C"), true);
     });
     
-    it("sed", function(done) {
+    it("sed", function() {
         cpu_unset_flag("D");
         cpu_pc(0x100);
         memory_set(0x100, 0xf8);
 
         execute();
 
-        assert.isTrue(cpu_flag("D"));
+        assert.strictEqual(cpu_flag("D"), true);
         cpu_set_flag("D");
         cpu_pc(0x100);
         memory_set(0x100, 0xf8);
 
         execute();
 
-        assert.isTrue(cpu_flag("D"));
-        done();
+        assert.strictEqual(cpu_flag("D"), true);
     });
     
-    it("sei", function(done) {
+    it("sei", function() {
         cpu_unset_flag("I");
         cpu_pc(0x100);
         memory_set(0x100, 0x78);
 
         execute();
 
-        assert.isTrue(cpu_flag("I"));
+        assert.strictEqual(cpu_flag("I"), true);
         cpu_set_flag("I");
         cpu_pc(0x100);
         memory_set(0x100, 0x78);
 
         execute();
 
-        assert.isTrue(cpu_flag("I"));
-        done();
+        assert.strictEqual(cpu_flag("I"), true);
     });
     
-    it("brk", function(done) {
+    it("brk", function() {
         cpu_set_register("P", 0xff - Status.B);
         cpu_pc(0x100);
         memory_set(0x100, 0x0);
@@ -3903,13 +3629,12 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_pull_byte(), 0xff);
-        assert.equal(cpu_pull_word(), 0x102);
-        assert.equal(cpu_register("PC"), 0x1ff);
-        done();
+        assert.strictEqual(cpu_pull_byte(), 0xff);
+        assert.strictEqual(cpu_pull_word(), 0x102);
+        assert.strictEqual(cpu_register("PC"), 0x1ff);
     });
     
-    it("rti", function(done) {
+    it("rti", function() {
         cpu_pc(0x100);
         cpu_push_word(0x102);
         cpu_push_byte(0x3);
@@ -3917,11 +3642,10 @@ describe("CPU", function () {
 
         execute();
 
-        assert.equal(cpu_register("PC"), 0x102);
-        done();
+        assert.strictEqual(cpu_register("PC"), 0x102);
     });
     
-    it("irq interrupt", function(done) {
+    it("irq interrupt", function() {
         cpu_set_register("P", 0xfb);
         cpu_pc(0x100);
         cpu_force_interrupt("irq");
@@ -3930,14 +3654,13 @@ describe("CPU", function () {
 
         execute_interrupt();
 
-        assert.equal(cpu_pull_byte(), 0xeb);
-        assert.equal(cpu_pull_word(), 0x100);
-        assert.equal(cpu_register("PC"), 0x140);
-        assert.isFalse(cpu_get_interrupt("irq"));
-        done();
+        assert.strictEqual(cpu_pull_byte(), 0xeb);
+        assert.strictEqual(cpu_pull_word(), 0x100);
+        assert.strictEqual(cpu_register("PC"), 0x140);
+        assert.strictEqual(cpu_get_interrupt("irq"), false);
     });
     
-    it("nmi interrupt", function(done) {
+    it("nmi interrupt", function() {
         cpu_set_register("P", 0xff);
         cpu_pc(0x100);
         cpu_force_interrupt("nmi");
@@ -3946,14 +3669,13 @@ describe("CPU", function () {
 
         execute_interrupt();
 
-        assert.equal(cpu_pull_byte(), 0xef);
-        assert.equal(cpu_pull_word(), 0x100);
-        assert.equal(cpu_register("PC"), 0x140);
-        assert.isFalse(cpu_get_interrupt("nmi"));
-        done();
+        assert.strictEqual(cpu_pull_byte(), 0xef);
+        assert.strictEqual(cpu_pull_word(), 0x100);
+        assert.strictEqual(cpu_register("PC"), 0x140);
+        assert.strictEqual(cpu_get_interrupt("nmi"), false);
     });
     
-    it("rst interrupt", function(done) {
+    it("rst interrupt", function() {
         cpu_pc(0x100);
         cpu_force_interrupt("rst");
         memory_set(0xfffc, 0x40);
@@ -3961,9 +3683,8 @@ describe("CPU", function () {
 
         execute_interrupt();
 
-        assert.equal(cpu_register("PC"), 0x140);
-        assert.isFalse(cpu_get_interrupt("rst"));
-        done();
+        assert.strictEqual(cpu_register("PC"), 0x140);
+        assert.strictEqual(cpu_get_interrupt("rst"), false);
     });
     
 });

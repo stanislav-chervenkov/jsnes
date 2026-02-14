@@ -1,4 +1,5 @@
-import { assert } from "chai";
+import assert from "node:assert/strict";
+import { describe, it, beforeEach } from "node:test";
 import Mappers from "../src/mappers/index.js";
 
 describe("Mappers", function () {
@@ -31,7 +32,7 @@ describe("Mappers", function () {
       mapper.write(romAddress, newValue);
 
       // Verify ROM was not modified
-      assert.equal(mockNes.cpu.mem[romAddress], originalValue);
+      assert.strictEqual(mockNes.cpu.mem[romAddress], originalValue);
     });
 
     it("does not modify ROM at high ROM addresses", function () {
@@ -41,7 +42,7 @@ describe("Mappers", function () {
 
       mapper.write(romAddress, 0x00);
 
-      assert.equal(mockNes.cpu.mem[romAddress], originalValue);
+      assert.strictEqual(mockNes.cpu.mem[romAddress], originalValue);
     });
 
     it("allows writes to cartridge SRAM", function () {
@@ -50,7 +51,7 @@ describe("Mappers", function () {
 
       mapper.write(sramAddress, 0x42);
 
-      assert.equal(mockNes.cpu.mem[sramAddress], 0x42);
+      assert.strictEqual(mockNes.cpu.mem[sramAddress], 0x42);
     });
 
     it("allows writes to RAM", function () {
@@ -59,7 +60,7 @@ describe("Mappers", function () {
 
       mapper.write(ramAddress, 0x42);
 
-      assert.equal(mockNes.cpu.mem[ramAddress & 0x7ff], 0x42);
+      assert.strictEqual(mockNes.cpu.mem[ramAddress & 0x7ff], 0x42);
     });
   });
 
@@ -71,7 +72,7 @@ describe("Mappers", function () {
 
       mapper.writelow(romAddress, 0xff);
 
-      assert.equal(mockNes.cpu.mem[romAddress], originalValue);
+      assert.strictEqual(mockNes.cpu.mem[romAddress], originalValue);
     });
   });
 });

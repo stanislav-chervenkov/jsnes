@@ -1,4 +1,5 @@
-import { assert } from "chai";
+import assert from "node:assert/strict";
+import { describe, it, before, after } from "node:test";
 import fs from "fs";
 import NES from "../src/nes.js";
 
@@ -621,27 +622,22 @@ function describeError(byte, code, errorTable) {
   return "byte " + byte + " error " + hex + " (unknown error code)";
 }
 
-describe("nestest (CPU test ROM)", function () {
-  this.timeout(30000);
-
+describe("nestest (CPU test ROM)", { timeout: 30000 }, function () {
   let results;
 
-  before(function (done) {
-    fs.readFile("roms/nestest/nestest.nes", function (err, data) {
-      if (err) return done(err);
-      results = runNestest(data.toString("binary"));
-      done();
-    });
+  before(function () {
+    let data = fs.readFileSync("roms/nestest/nestest.nes");
+    results = runNestest(data.toString("binary"));
   });
 
   it("should run without crashing", function () {
-    assert.isAbove(
-      results.instructions,
-      1000,
+    assert.ok(
+      results.instructions > 1000,
       "Test ROM didn't run enough instructions",
     );
-    assert.isFalse(
+    assert.strictEqual(
       results.crashed,
+      false,
       "ROM crashed: " + results.crashMessage,
     );
   });

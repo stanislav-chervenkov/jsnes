@@ -1,44 +1,39 @@
-import { assert } from "chai";
+import assert from "node:assert/strict";
+import { describe, it, before, mock } from "node:test";
 import fs from "fs";
 import NES from "../src/nes.js";
-import sinon from "sinon";
 
 describe("NES", function() {
   it("can be initialized", function() {
     let nes = new NES();
   });
 
-  it("loads a ROM and runs a frame", function(done) {
-    let onFrame = sinon.spy();
+  it("loads a ROM and runs a frame", function() {
+    let onFrame = mock.fn();
     let nes = new NES({ onFrame: onFrame });
-    fs.readFile("roms/croom/croom.nes", function(err, data) {
-      if (err) return done(err);
-      nes.loadROM(data.toString("binary"));
-      nes.frame();
-      assert(onFrame.calledOnce);
-      assert.instanceOf(onFrame.args[0][0], Uint32Array);
-      assert.lengthOf(onFrame.args[0][0], 256 * 240);
-      done();
-    });
+    let data = fs.readFileSync("roms/croom/croom.nes");
+    nes.loadROM(data.toString("binary"));
+    nes.frame();
+    assert.strictEqual(onFrame.mock.callCount(), 1);
+    assert.ok(onFrame.mock.calls[0].arguments[0] instanceof Uint32Array);
+    assert.strictEqual(onFrame.mock.calls[0].arguments[0].length, 256 * 240);
   });
 
-  it("generates the correct frame buffer", function(done) {
-    let onFrame = sinon.spy();
+  it("generates the correct frame buffer", function() {
+    let onFrame = mock.fn();
     let nes = new NES({ onFrame: onFrame });
-    fs.readFile("roms/croom/croom.nes", function(err, data) {
-      if (err) return done(err);
-      nes.loadROM(data.toString("binary"));
-      // Check the first index of a white pixel on the first 6 frames of
-      // output. Croom only uses 2 colors on the initial screen which makes
-      // it easy to detect. Comparing full snapshots of each frame takes too
-      // long.
-      let expectedIndexes = [-1, -1, -1, 2056, 4104, 4104];
-      for (let i = 0; i < 6; i++) {
-        nes.frame();
-        assert.equal(onFrame.lastCall.args[0].indexOf(0xFFFFFF), expectedIndexes[i]);
-      }
-      done();
-    });
+    let data = fs.readFileSync("roms/croom/croom.nes");
+    nes.loadROM(data.toString("binary"));
+    // Check the first index of a white pixel on the first 6 frames of
+    // output. Croom only uses 2 colors on the initial screen which makes
+    // it easy to detect. Comparing full snapshots of each frame takes too
+    // long.
+    let expectedIndexes = [-1, -1, -1, 2056, 4104, 4104];
+    for (let i = 0; i < 6; i++) {
+      nes.frame();
+      let lastCall = onFrame.mock.calls[onFrame.mock.calls.length - 1];
+      assert.strictEqual(lastCall.arguments[0].indexOf(0xFFFFFF), expectedIndexes[i]);
+    }
   });
 
   describe("#loadROM()", function() {
@@ -46,7 +41,7 @@ describe("NES", function() {
       let nes = new NES();
       assert.throws(function() {
         nes.loadROM("foo");
-      }, "Not a valid NES ROM.");
+      }, { message: "Not a valid NES ROM." });
     });
   });
 
@@ -89,7 +84,7 @@ describe("NES", function() {
       assert.throws(function() {
         nes.frame();
       }, /invalid opcode/);
-      assert.isTrue(nes.crashed);
+      assert.strictEqual(nes.crashed, true);
       // Subsequent calls to frame() should also throw
       assert.throws(function() {
         nes.frame();
@@ -97,36 +92,33 @@ describe("NES", function() {
     });
 
     it("can be reset after crashing", function() {
-      let onFrame = sinon.spy();
+      let onFrame = mock.fn();
       let nes = new NES({ onFrame: onFrame });
       nes.loadROM(makeInvalidOpcodeROM());
       assert.throws(function() {
         nes.frame();
       }, /invalid opcode/);
-      assert.isTrue(nes.crashed);
+      assert.strictEqual(nes.crashed, true);
       // After reset, crashed flag is cleared
       nes.reset();
-      assert.isFalse(nes.crashed);
+      assert.strictEqual(nes.crashed, false);
     });
   });
 
   describe("#getFPS()", function() {
     let nes = new NES();
-    before(function(done) {
-      fs.readFile("roms/croom/croom.nes", function(err, data) {
-        if (err) return done(err);
-        nes.loadROM(data.toString("binary"));
-        done();
-      });
+    before(function() {
+      let data = fs.readFileSync("roms/croom/croom.nes");
+      nes.loadROM(data.toString("binary"));
     });
 
     it("returns an FPS count when frames have been run", function() {
-      assert.isNull(nes.getFPS());
+      assert.strictEqual(nes.getFPS(), null);
       nes.frame();
       nes.frame();
       let fps = nes.getFPS();
-      assert.isNumber(fps);
-      assert.isAbove(fps, 0);
+      assert.strictEqual(typeof fps, "number");
+      assert.ok(fps > 0);
     });
   });
 });

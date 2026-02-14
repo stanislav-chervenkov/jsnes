@@ -1,4 +1,5 @@
-import { assert } from "chai";
+import assert from "node:assert/strict";
+import { describe, it, before, after } from "node:test";
 import fs from "fs";
 import NES from "../src/nes.js";
 import Controller from "../src/controller.js";
@@ -419,17 +420,12 @@ function formatResult(value) {
   );
 }
 
-describe("AccuracyCoin", function () {
-  this.timeout(600000); // 10 minutes — running 134 tests takes a while
-
+describe("AccuracyCoin", { timeout: 600000 }, function () {
   let run;
 
-  before(function (done) {
-    fs.readFile("roms/AccuracyCoin/AccuracyCoin.nes", function (err, data) {
-      if (err) return done(err);
-      run = runAccuracyCoin(data.toString("binary"));
-      done();
-    });
+  before(function () {
+    let data = fs.readFileSync("roms/AccuracyCoin/AccuracyCoin.nes");
+    run = runAccuracyCoin(data.toString("binary"));
   });
 
   it("should not crash before completing all tests", function () {
@@ -479,10 +475,11 @@ describe("AccuracyCoin", function () {
           it.skip(test.name + " — " + knownFailure, function () {});
           return;
         }
-        it(test.name, function () {
+        it(test.name, function (t) {
           let result = run.results[test.addr];
           if (result === 0x00) {
-            this.skip(); // not run (likely due to earlier crash)
+            t.skip(); // not run (likely due to earlier crash)
+            return;
           }
           if (!isPass(result)) {
             assert.fail(

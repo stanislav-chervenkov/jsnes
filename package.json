@@ -14,20 +14,17 @@
   "scripts": {
     "build": "webpack",
     "typecheck": "tsc --noEmit",
-    "test": "npm run typecheck && prettier --check src/**/*.js && mocha ./test/*.spec.js",
-    "test:watch": "mocha -w ./test/*.spec.js",
+    "test": "npm run typecheck && prettier --check src/**/*.js && node --test ./test/*.spec.js",
+    "test:watch": "node --test --watch ./test/*.spec.js",
     "prepublish": "npm run build",
     "format": "prettier --write src/**/*.js"
   },
   "devDependencies": {
     "@types/node": "^25.0.2",
-    "chai": "^6.2.2",
     "eslint": "^9.15.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-webpack-plugin": "^5.0.2",
-    "mocha": "^11.7.1",
     "prettier": "^3.6.2",
-    "sinon": "^21.0.0",
     "terser-webpack-plugin": "^5.3.10",
     "typescript": "^5.8.3",
     "webpack": "^5.100.2",
