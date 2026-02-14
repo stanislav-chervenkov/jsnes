@@ -390,8 +390,7 @@ class CPU {
 
         // Branch on carry clear
         if (this.F_CARRY === 0) {
-          cycleCount += (opaddr & 0xff00) !== (addr & 0xff00) ? 2 : 1;
-          this.REG_PC = addr;
+          cycleCount += this._takeBranch(opaddr, addr);
         }
         break;
       }
@@ -402,8 +401,7 @@ class CPU {
 
         // Branch on carry set
         if (this.F_CARRY === 1) {
-          cycleCount += (opaddr & 0xff00) !== (addr & 0xff00) ? 2 : 1;
-          this.REG_PC = addr;
+          cycleCount += this._takeBranch(opaddr, addr);
         }
         break;
       }
@@ -414,8 +412,7 @@ class CPU {
 
         // Branch on zero
         if (this.F_ZERO === 0) {
-          cycleCount += (opaddr & 0xff00) !== (addr & 0xff00) ? 2 : 1;
-          this.REG_PC = addr;
+          cycleCount += this._takeBranch(opaddr, addr);
         }
         break;
       }
@@ -438,8 +435,7 @@ class CPU {
 
         // Branch on negative result
         if (this.F_SIGN === 1) {
-          cycleCount += (opaddr & 0xff00) !== (addr & 0xff00) ? 2 : 1;
-          this.REG_PC = addr;
+          cycleCount += this._takeBranch(opaddr, addr);
         }
         break;
       }
@@ -450,8 +446,7 @@ class CPU {
 
         // Branch on not zero
         if (this.F_ZERO !== 0) {
-          cycleCount += (opaddr & 0xff00) !== (addr & 0xff00) ? 2 : 1;
-          this.REG_PC = addr;
+          cycleCount += this._takeBranch(opaddr, addr);
         }
         break;
       }
@@ -462,8 +457,7 @@ class CPU {
 
         // Branch on positive result
         if (this.F_SIGN === 0) {
-          cycleCount += (opaddr & 0xff00) !== (addr & 0xff00) ? 2 : 1;
-          this.REG_PC = addr;
+          cycleCount += this._takeBranch(opaddr, addr);
         }
         break;
       }
@@ -501,8 +495,7 @@ class CPU {
 
         // Branch on overflow clear
         if (this.F_OVERFLOW === 0) {
-          cycleCount += (opaddr & 0xff00) !== (addr & 0xff00) ? 2 : 1;
-          this.REG_PC = addr;
+          cycleCount += this._takeBranch(opaddr, addr);
         }
         break;
       }
@@ -513,8 +506,7 @@ class CPU {
 
         // Branch on overflow set
         if (this.F_OVERFLOW === 1) {
-          cycleCount += (opaddr & 0xff00) !== (addr & 0xff00) ? 2 : 1;
-          this.REG_PC = addr;
+          cycleCount += this._takeBranch(opaddr, addr);
         }
         break;
       }
@@ -1702,6 +1694,31 @@ class CPU {
     let cyclesToFirstClock = (dmc.shiftCounter + 7) >> 3;
     if (cyclesToFirstClock <= 0) cyclesToFirstClock = cyclesPerClock;
     return cyclesToFirstClock + (dmc.dmaCounter - 1) * cyclesPerClock;
+  }
+
+  // Branch dummy reads: when a branch is taken, the 6502 performs a dummy
+  // read from the next sequential instruction address (cycle 3). On a page
+  // crossing, it performs an additional dummy read from the "wrong" address
+  // where PCH hasn't been fixed yet (cycle 4). These are real bus operations
+  // that update the data bus and can trigger I/O side effects.
+  // See https://www.nesdev.org/6502_cpu.txt (Relative addressing section)
+  _takeBranch(opaddr, addr) {
+    // Real addresses (jsnes REG_PC is offset by -1 from real PC)
+    let nextPC = (opaddr + 3) & 0xffff; // address of next instruction
+    let target = (addr + 1) & 0xffff; // actual branch target
+
+    // Cycle 3: dummy read from next instruction address
+    this.load(nextPC);
+
+    if ((nextPC & 0xff00) !== (target & 0xff00)) {
+      // Page crossing: cycle 4 dummy read from wrong address (unfixed PCH)
+      let wrongAddr = (nextPC & 0xff00) | (target & 0x00ff);
+      this.load(wrongAddr);
+      this.REG_PC = addr;
+      return 2;
+    }
+    this.REG_PC = addr;
+    return 1;
   }
 
   // The logic mirrors the frame loop's dot-by-dot path (sprite 0 hit,
