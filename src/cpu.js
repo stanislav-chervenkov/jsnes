@@ -183,7 +183,13 @@ class CPU {
         break;
       }
       case 2: {
-        // Ignore. Address is implied in instruction.
+        // Implied mode. The 6502's second cycle performs a dummy read of the
+        // byte at PC (the next opcode). This is a real bus operation that
+        // updates the data bus and can trigger I/O side effects.
+        // Note: opaddr is REG_PC which is one less than the actual instruction
+        // address (opcode is at opaddr+1), so the dummy read targets opaddr+2.
+        // See https://www.nesdev.org/wiki/CPU_addressing_modes
+        this.load(opaddr + 2);
         break;
       }
       case 3: {
@@ -193,8 +199,11 @@ class CPU {
         break;
       }
       case 4: {
-        // Accumulator mode. The address is in the accumulator
-        // register.
+        // Accumulator mode. The address is in the accumulator register.
+        // Like implied mode, the 6502 performs a dummy read of the byte at PC
+        // during its second cycle (opaddr+2, see case 2 comment).
+        // See https://www.nesdev.org/wiki/CPU_addressing_modes
+        this.load(opaddr + 2);
         addr = this.REG_ACC;
         break;
       }

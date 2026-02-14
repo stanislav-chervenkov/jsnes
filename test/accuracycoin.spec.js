@@ -317,7 +317,7 @@ const KNOWN_FAILURES = {
 
   // CPU behavior 2: need cycle-accurate instruction timing
   0x0460: "Instruction timing not accurate",
-  0x046d: "Implied dummy reads not accurate",
+  0x046d: "Implied dummy reads blocked by DMA sync prerequisite",
   0x048b: "Branch dummy reads not accurate",
 };
 
