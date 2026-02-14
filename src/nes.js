@@ -32,6 +32,7 @@ class NES {
     this.ppu = new PPU(this);
     this.papu = new PAPU(this);
     this.gameGenie = new GameGenie();
+    this.gameGenie.onChange = () => this.cpu._updateCartridgeLoader();
     this.mmap = null;
     this.controllers = {
       1: new Controller(),

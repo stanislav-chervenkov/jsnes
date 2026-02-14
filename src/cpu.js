@@ -1522,14 +1522,36 @@ class CPU {
   // Reads from cartridge ROM, applying any active Game Genie patches.
   // Used for opcode fetches, operand reads, indirect jumps, and interrupt
   // vectors — all places where Game Genie can intercept ROM reads.
+  //
+  // This method is swapped at runtime via _updateCartridgeLoader() to avoid
+  // checking Game Genie state on every ROM read. When no patches are active,
+  // it points to _loadFromCartridgePlain (zero overhead). When patches are
+  // active, it points to _loadFromCartridgeWithGameGenie.
   loadFromCartridge(addr) {
+    return this.nes.mmap.load(addr);
+  }
+
+  _loadFromCartridgePlain(addr) {
+    return this.nes.mmap.load(addr);
+  }
+
+  _loadFromCartridgeWithGameGenie(addr) {
     let value = this.nes.mmap.load(addr);
+    return this.nes.gameGenie.applyCodes(addr, value);
+  }
 
+  // Swap loadFromCartridge to the appropriate implementation based on
+  // whether Game Genie patches are active. Called by GameGenie when
+  // patches or enabled state change.
+  _updateCartridgeLoader() {
     if (this.nes.gameGenie.enabled && this.nes.gameGenie.patches.length > 0) {
-      value = this.nes.gameGenie.applyCodes(addr, value);
+      this.loadFromCartridge = this._loadFromCartridgeWithGameGenie;
+    } else {
+      // Delete instance property to fall back to the prototype method,
+      // which is the plain loader. This keeps the hidden class stable
+      // for V8 optimization.
+      delete this.loadFromCartridge;
     }
-
-    return value;
   }
 
   // Each load() call represents one CPU bus read cycle.

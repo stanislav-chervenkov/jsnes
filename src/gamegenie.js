@@ -17,22 +17,30 @@ class GameGenie {
   constructor() {
     this.patches = [];
     this.enabled = true;
+    // Callback invoked when patches or enabled state change, so the CPU
+    // can swap its loadFromCartridge function pointer. Set by NES after
+    // construction.
+    this.onChange = null;
   }
 
   setEnabled(enabled) {
     this.enabled = enabled;
+    if (this.onChange) this.onChange();
   }
 
   addCode(code) {
     this.patches.push(this.decode(code));
+    if (this.onChange) this.onChange();
   }
 
   addPatch(addr, value, key) {
     this.patches.push({ addr, value, key });
+    if (this.onChange) this.onChange();
   }
 
   removeAllCodes() {
     this.patches = [];
+    if (this.onChange) this.onChange();
   }
 
   // Apply Game Genie patches to a value being read from the given address.
