@@ -7,7 +7,6 @@ export default defineConfig({
     include: ["jsnes"],
   },
   build: {
-    outDir: "build",
     commonjsOptions: {
       include: [/jsnes/, /node_modules/],
     },
