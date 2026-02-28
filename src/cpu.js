@@ -101,6 +101,13 @@ class CPU {
     // APU frame counter cycles already advanced mid-instruction (for $4015
     // catch-up). Reset at start of each instruction.
     this.apuCatchupCycles = 0;
+    // Running total of CPU cycles executed so far in the current frame.
+    // Used to determine APU clock parity for $4016 OUT0 latching.
+    // The 2A03's output ports (OUT0-OUT2) only update on APU clock edges,
+    // which occur every 2 CPU cycles. This counter lets mapper code check
+    // whether a given bus cycle falls on a "put" (even) or "get" (odd)
+    // cycle. See https://www.nesdev.org/wiki/CPU_pin_out_and_signal_timing
+    this._cpuCycleBase = 0;
     // Records which bus cycle nmiRaised was set during, for 0-delay vs
     // 1-delay NMI determination at end of instruction.
     this.nmiRaisedAtCycle = 0;
@@ -130,6 +137,7 @@ class CPU {
       this.REG_PC = this.REG_PC_NEW;
       this.F_INTERRUPT = this.F_INTERRUPT_NEW;
       this.F_BRK = this.F_BRK_NEW;
+      this._cpuCycleBase += 7;
       return 7;
     }
 
@@ -1597,6 +1605,7 @@ class CPU {
       interruptCycles = 7;
     }
 
+    this._cpuCycleBase += cycleCount + interruptCycles;
     return cycleCount + interruptCycles;
   }
 
@@ -2012,6 +2021,7 @@ class CPU {
     "F_NOTUSED_NEW",
     "F_BRK",
     "F_BRK_NEW",
+    "_cpuCycleBase",
   ];
 
   toJSON() {

@@ -97,6 +97,7 @@ class NES {
           }
           papu.clockFrameCounter(chunk);
           cpu.cyclesToHalt -= chunk;
+          cpu._cpuCycleBase += chunk;
 
           if (ppu.frameEnded) {
             ppu.frameEnded = false;
