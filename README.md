@@ -54,6 +54,9 @@ var browser = new jsnes.Browser({
 
 See [Keyboard Controls](#keyboard-controls) below for default key bindings. Gamepads are also supported automatically.
 
+A complete embedding example is in the `example/` directory. You can try it by running `npx serve .` in the repository root and opening [http://localhost:3000/example/nes-embed](http://localhost:3000/example/nes-embed).
+
+
 ### React
 
 ```jsx
@@ -112,8 +115,6 @@ nes.buttonUp(1, jsnes.Controller.BUTTON_A);
 nes.frame();
 // ...
 ```
-
-A complete embedding example is in the `example/` directory.
 
 ## API Reference
 

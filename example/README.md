@@ -1,3 +1,3 @@
 An example app to demonstrate a simple way to embed JSNES.
 
-ROM is by @slembcke: https://github.com/slembcke/InterglacticTransmissing
+You can try it by running `npx serve .` in the parent directoryand opening [http://localhost:3000/example/nes-embed](http://localhost:3000/example/nes-embed).
