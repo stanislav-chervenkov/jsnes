@@ -14,7 +14,7 @@ For Node.js or Webpack:
 In the browser, you can use [unpkg](https://unpkg.com):
 
 ```html
-<script type="text/javascript" src="https://unpkg.com/jsnes/dist/jsnes.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/jsnes@2/dist/jsnes.min.js"></script>
 ```
 
 ## Usage
@@ -25,7 +25,7 @@ The easiest way to use JSNES in a web page is with `jsnes.Browser`. It handles c
 
 ```html
 <div id="nes" style="width: 512px; height: 480px"></div>
-<script src="https://unpkg.com/jsnes/dist/jsnes.min.js"></script>
+<script src="https://unpkg.com/jsnes@2/dist/jsnes.min.js"></script>
 <script>
   var browser = new jsnes.Browser({
     container: document.getElementById("nes"),
