@@ -29,17 +29,22 @@ class PaletteTable {
       gFactor = 1.0;
       bFactor = 1.0;
 
+      // NTSC emphasis bits from $2001:
+      // Bit 5 (emph & 1): Emphasize Red → darken Green + Blue
+      // Bit 6 (emph & 2): Emphasize Green → darken Red + Blue
+      // Bit 7 (emph & 4): Emphasize Blue → darken Red + Green
+      // See https://www.nesdev.org/wiki/PPU_registers#Color_emphasis
       if ((emph & 1) !== 0) {
-        rFactor = 0.75;
+        gFactor = 0.75;
         bFactor = 0.75;
       }
       if ((emph & 2) !== 0) {
         rFactor = 0.75;
-        gFactor = 0.75;
+        bFactor = 0.75;
       }
       if ((emph & 4) !== 0) {
+        rFactor = 0.75;
         gFactor = 0.75;
-        bFactor = 0.75;
       }
 
       this.emphTable[emph] = new Uint32Array(64);
