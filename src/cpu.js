@@ -1987,6 +1987,7 @@ class CPU {
   static JSON_PROPERTIES = [
     "mem",
     "cyclesToHalt",
+    "dataBus",
     "irqRequested",
     "irqType",
     "nmiRaised",
