@@ -1,6 +1,7 @@
 ._*
 .DS_Store
 .claude/settings.local.json
+.claude/worktrees
 /dist
 /local-roms
 /node_modules
