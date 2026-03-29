@@ -55,7 +55,7 @@ nes.buttonDown(1, jsnes.Controller.BUTTON_A); // Handle input
 
 ## Testing
 
-Tests use Mocha + Chai + Sinon:
+Tests use `node:test` + `node:assert/strict` (Node's built-in test runner):
 - `test/nes.spec.js` - Basic initialization, ROM loading, frame generation with regression testing using `croom.nes` test ROM, frame buffer validation, error handling
 - `test/cpu.spec.js` - Comprehensive CPU instruction testing (based on upstream wedNESday and nintengo test suites)
 - `test/mappers.spec.js` - Mapper functionality tests (ROM protection, SRAM writes, RAM mirroring)
