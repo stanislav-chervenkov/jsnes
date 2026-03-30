@@ -151,6 +151,32 @@ describe("NES", function () {
     });
   });
 
+  it("serializes CPU dataBus and controller state", function () {
+    let nes = new NES();
+    let data = fs.readFileSync("roms/croom/croom.nes");
+    nes.loadROM(data.toString("binary"));
+
+    nes.cpu.dataBus = 0xab;
+    nes.controllers[1].buttonDown(0);
+    nes.controllers[1].buttonDown(8);
+    nes.controllers[1].clock();
+    nes.controllers[2].buttonDown(1);
+
+    let state = nes.toJSON();
+
+    let restored = new NES();
+    restored.loadROM(data.toString("binary"));
+    restored.fromJSON(state);
+
+    assert.strictEqual(restored.cpu.dataBus, 0xab);
+    assert.deepStrictEqual(
+      restored.controllers[1].state,
+      nes.controllers[1].state,
+    );
+    assert.strictEqual(restored.controllers[1].turboA, true);
+    assert.strictEqual(restored.controllers[2].state[1], 0x41);
+  });
+
   describe("#getFPS()", function () {
     let nes = new NES();
     before(function () {

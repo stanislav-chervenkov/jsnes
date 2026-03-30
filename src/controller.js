@@ -1,3 +1,5 @@
+import { toJSON, fromJSON } from "./utils.js";
+
 class Controller {
   static BUTTON_A = 0;
   static BUTTON_B = 1;
@@ -11,6 +13,15 @@ class Controller {
   // extra buttons on the NES Advantage and dogbone controllers.
   static BUTTON_TURBO_A = 8;
   static BUTTON_TURBO_B = 9;
+
+  static JSON_PROPERTIES = [
+    "state",
+    "baseA",
+    "baseB",
+    "turboA",
+    "turboB",
+    "turboToggle",
+  ];
 
   constructor() {
     this.state = new Array(8);
@@ -64,6 +75,14 @@ class Controller {
     if (this.turboB) {
       this.state[Controller.BUTTON_B] = this.turboToggle ? 0x41 : 0x40;
     }
+  }
+
+  toJSON() {
+    return toJSON(this);
+  }
+
+  fromJSON(s) {
+    fromJSON(this, s);
   }
 }
 
