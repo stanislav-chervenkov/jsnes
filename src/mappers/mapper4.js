@@ -36,7 +36,7 @@ class Mapper4 extends Mapper0 {
       return;
     }
 
-    switch (address) {
+    switch (address & 0xe001) {
       case 0x8000: {
         // Command/Address Select register
         this.command = value & 7;
@@ -91,11 +91,8 @@ class Mapper4 extends Mapper0 {
         this.irqEnable = 1;
         break;
 
-      default:
-      // Not a MMC3 register.
-      // The game has probably crashed,
-      // since it tries to write to ROM..
-      // IGNORE.
+      // No default needed: the 0xE001 mask maps every address >= $8000
+      // to one of the eight cases above.
     }
   }
 
