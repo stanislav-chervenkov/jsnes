@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Browser } from "@stanislav-chervenkov/jsnes";
+import { Browser } from "@schervenkov/jsnes";
 
 /*
  * Thin React wrapper around jsnes.Browser.

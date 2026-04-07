@@ -4,14 +4,14 @@ A JavaScript NES emulator.
 
 It's a library that works in both the browser and Node.js.
 
-**This repository** is a fork maintained separately from the original project. It is published on npm as **`@stanislav-chervenkov/jsnes`** so it does not replace the [`jsnes`](https://www.npmjs.com/package/jsnes) package. Upstream: [bfirsh/jsnes](https://github.com/bfirsh/jsnes).
+**This repository** is a fork maintained separately from the original project. It is published on npm as **`@schervenkov/jsnes`** (scoped to the maintainer’s npm user) so it does not replace the [`jsnes`](https://www.npmjs.com/package/jsnes) package. Upstream: [bfirsh/jsnes](https://github.com/bfirsh/jsnes).
 
 ## Installation
 
 For Node.js, Vite, Webpack, etc.:
 
 ```bash
-npm install @stanislav-chervenkov/jsnes
+npm install @schervenkov/jsnes
 ```
 
 In the browser, you can use [unpkg](https://unpkg.com) (global name is still `jsnes`):
@@ -19,7 +19,7 @@ In the browser, you can use [unpkg](https://unpkg.com) (global name is still `js
 ```html
 <script
   type="text/javascript"
-  src="https://unpkg.com/@stanislav-chervenkov/jsnes@2/dist/jsnes.min.js"
+  src="https://unpkg.com/@schervenkov/jsnes@2/dist/jsnes.min.js"
 ></script>
 ```
 
@@ -31,7 +31,7 @@ The easiest way to use JSNES in a web page is with `jsnes.Browser`. It handles c
 
 ```html
 <div id="nes" style="width: 512px; height: 480px"></div>
-<script src="https://unpkg.com/@stanislav-chervenkov/jsnes@2/dist/jsnes.min.js"></script>
+<script src="https://unpkg.com/@schervenkov/jsnes@2/dist/jsnes.min.js"></script>
 <script>
   var browser = new jsnes.Browser({
     container: document.getElementById("nes"),
@@ -66,7 +66,7 @@ A complete embedding example is in the `example/` directory. You can try it by r
 ### React
 
 ```jsx
-import { Browser } from "@stanislav-chervenkov/jsnes";
+import { Browser } from "@schervenkov/jsnes";
 
 function Emulator({ romData }) {
   const containerRef = useRef(null);

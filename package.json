@@ -1,5 +1,5 @@
 {
-  "name": "@stanislav-chervenkov/jsnes",
+  "name": "@schervenkov/jsnes",
   "version": "2.0.0",
   "description": "JavaScript NES emulator (community fork; API compatible with upstream jsnes).",
   "homepage": "https://github.com/stanislav-chervenkov/jsnes",

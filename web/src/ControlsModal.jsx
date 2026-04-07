@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Controller } from "@stanislav-chervenkov/jsnes";
+import { Controller } from "@schervenkov/jsnes";
 import ControlMapperRow from "./ControlMapperRow";
 
 const GAMEPAD_ICON = "../img/nes_controller.png";
