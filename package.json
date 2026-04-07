@@ -1,9 +1,10 @@
 {
-  "name": "jsnes",
+  "name": "@stanislav-chervenkov/jsnes",
   "version": "2.0.0",
-  "description": "A JavaScript NES emulator",
-  "homepage": "https://github.com/bfirsh/jsnes",
+  "description": "JavaScript NES emulator (community fork; API compatible with upstream jsnes).",
+  "homepage": "https://github.com/stanislav-chervenkov/jsnes",
   "author": "Ben Firshman <ben@firshman.com>",
+  "contributors": ["Stanislav Chervenkov"],
   "main": "dist/jsnes.js",
   "exports": {
     ".": {
@@ -15,7 +16,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/bfirsh/jsnes.git"
+    "url": "git+https://github.com/stanislav-chervenkov/jsnes.git"
+  },
+  "bugs": {
+    "url": "https://github.com/stanislav-chervenkov/jsnes/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "files": [
     "dist",

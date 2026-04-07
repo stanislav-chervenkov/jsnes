@@ -4,6 +4,12 @@ import PPU from "./ppu/index.js";
 import PAPU from "./papu/index.js";
 import GameGenie from "./gamegenie.js";
 import ROM from "./rom.js";
+import {
+  getFastStateByteLength,
+  loadFastState,
+  saveFastState,
+  saveFastStateInto as writeFastStateInto,
+} from "./fast-state.js";
 
 class NES {
   constructor(opts) {
@@ -36,6 +42,8 @@ class NES {
 
     this.fpsFrameCount = 0;
     this.romData = null;
+    /** @type {Uint8Array | null} Reusable buffer for saveRewindCheckpoint. */
+    this._rewindBuffer = null;
 
     this.ui.updateStatus("Ready to load a ROM.");
   }
@@ -165,6 +173,7 @@ class NES {
     this.mmap.loadROM();
     this.ppu.setMirroring(this.rom.getMirroringType());
     this.romData = data;
+    this._rewindBuffer = null;
   }
 
   // Adjust audio sample timing for a non-standard host frame rate. At the
@@ -200,6 +209,61 @@ class NES {
       if (s.controllers[1]) this.controllers[1].fromJSON(s.controllers[1]);
       if (s.controllers[2]) this.controllers[2].fromJSON(s.controllers[2]);
     }
+  }
+
+  /**
+   * Byte size of a binary snapshot for the current ROM (mapper JSON tail varies).
+   */
+  getFastStateByteLength() {
+    return getFastStateByteLength(this);
+  }
+
+  /**
+   * Full-state snapshot as Uint8Array (fast binary; for sockets or storing checkpoints).
+   */
+  exportFastStateSnapshot() {
+    return saveFastState(this);
+  }
+
+  /**
+   * Restore from exportFastStateSnapshot(), saveFastStateInto(), or saveRewindCheckpoint buffer copy.
+   */
+  importFastStateSnapshot(buf) {
+    loadFastState(this, buf);
+  }
+
+  /**
+   * Copy snapshot into an existing Uint8Array. Returns bytes written.
+   * Pass knownLength from getFastStateByteLength() to avoid a second measure pass.
+   */
+  saveFastStateInto(outBuf, outOffset, knownLength) {
+    return writeFastStateInto(this, outBuf, outOffset, knownLength);
+  }
+
+  /**
+   * Saves one rewind slot (reuses internal buffer). Call before frame() you may need to roll back.
+   */
+  saveRewindCheckpoint() {
+    if (!this.mmap) {
+      throw new Error("rewind: load a ROM first.");
+    }
+    const n = getFastStateByteLength(this);
+    if (!this._rewindBuffer || this._rewindBuffer.byteLength < n) {
+      this._rewindBuffer = new Uint8Array(n);
+    }
+    writeFastStateInto(this, this._rewindBuffer, 0, n);
+  }
+
+  /**
+   * Restores the last saveRewindCheckpoint() (fast rewind one frame).
+   */
+  rewindOneFrame() {
+    if (!this._rewindBuffer) {
+      throw new Error(
+        "rewind: call saveRewindCheckpoint() before the frame to roll back.",
+      );
+    }
+    loadFastState(this, this._rewindBuffer);
   }
 }
 

@@ -35,4 +35,11 @@ export class NES {
   setFramerate: (rate: number) => void;
   toJSON: () => EmulatorData;
   fromJSON: (data: EmulatorData) => void;
+
+  getFastStateByteLength: () => number;
+  exportFastStateSnapshot: () => Uint8Array;
+  importFastStateSnapshot: (data: Uint8Array | ArrayBuffer) => void;
+  saveFastStateInto: (outBuf: Uint8Array, outOffset?: number, knownLength?: number) => number;
+  saveRewindCheckpoint: () => void;
+  rewindOneFrame: () => void;
 }

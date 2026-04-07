@@ -1,20 +1,26 @@
-# JSNES
+# JSNES (this fork)
 
 A JavaScript NES emulator.
 
 It's a library that works in both the browser and Node.js.
 
+**This repository** is a fork maintained separately from the original project. It is published on npm as **`@stanislav-chervenkov/jsnes`** so it does not replace the [`jsnes`](https://www.npmjs.com/package/jsnes) package. Upstream: [bfirsh/jsnes](https://github.com/bfirsh/jsnes).
+
 ## Installation
 
-For Node.js or Webpack:
+For Node.js, Vite, Webpack, etc.:
 
-    $ npm install jsnes
+```bash
+npm install @stanislav-chervenkov/jsnes
+```
 
-
-In the browser, you can use [unpkg](https://unpkg.com):
+In the browser, you can use [unpkg](https://unpkg.com) (global name is still `jsnes`):
 
 ```html
-<script type="text/javascript" src="https://unpkg.com/jsnes@2/dist/jsnes.min.js"></script>
+<script
+  type="text/javascript"
+  src="https://unpkg.com/@stanislav-chervenkov/jsnes@2/dist/jsnes.min.js"
+></script>
 ```
 
 ## Usage
@@ -25,7 +31,7 @@ The easiest way to use JSNES in a web page is with `jsnes.Browser`. It handles c
 
 ```html
 <div id="nes" style="width: 512px; height: 480px"></div>
-<script src="https://unpkg.com/jsnes@2/dist/jsnes.min.js"></script>
+<script src="https://unpkg.com/@stanislav-chervenkov/jsnes@2/dist/jsnes.min.js"></script>
 <script>
   var browser = new jsnes.Browser({
     container: document.getElementById("nes"),
@@ -60,7 +66,7 @@ A complete embedding example is in the `example/` directory. You can try it by r
 ### React
 
 ```jsx
-import { Browser } from "jsnes";
+import { Browser } from "@stanislav-chervenkov/jsnes";
 
 function Emulator({ romData }) {
   const containerRef = useRef(null);
@@ -149,6 +155,12 @@ var nes = new jsnes.NES(options);
 | `nes.setFramerate(rate)` | Change the target frame rate. |
 | `nes.toJSON()` | Serialize emulator state (for save states). |
 | `nes.fromJSON(data)` | Restore emulator state from a previous `toJSON()` call. |
+| `nes.getFastStateByteLength()` | Size in bytes of a binary snapshot (same ROM). |
+| `nes.exportFastStateSnapshot()` | Full state as `Uint8Array` (fast binary; checkpoints / netplay). |
+| `nes.importFastStateSnapshot(data)` | Restore from a snapshot buffer (same ROM). |
+| `nes.saveFastStateInto(outBuf, offset?, knownLength?)` | Write snapshot into an existing buffer; returns bytes written. |
+| `nes.saveRewindCheckpoint()` | Store one rewind slot (internal buffer). Call before `frame()` to allow rollback. |
+| `nes.rewindOneFrame()` | Restore the last `saveRewindCheckpoint()` (fast one-frame rewind). |
 | `nes.zapperMove(x, y)` | Move the Zapper light gun to the given pixel coordinates. |
 | `nes.zapperFireDown()` | Pull the Zapper trigger. |
 | `nes.zapperFireUp()` | Release the Zapper trigger. |
